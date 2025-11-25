@@ -294,7 +294,7 @@
             data-yt
             title="MotionTrans — Project Video"
             loading="lazy"
-            src="https://www.youtube.com/embed/-kLJIXnBwOw?rel=0&modestbranding=1&playsinline=1"
+            src="./resources/video2act_demo.mp4"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen>
           </iframe>
@@ -315,7 +315,15 @@
           <div class="mt-card" style="backdrop-filter: blur(4px); background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.9)); border-left:4px solid #7c3aed;">
             <div class="content has-text-justified" style="margin:0;">
               <p>
-                Scaling real robot data is a key bottleneck in imitation learning, leading to the use of auxiliary data for policy training. While other aspects of robotic manipulation such as image or language understanding may be learned from internet-based datasets, acquiring <b>motion knowledge</b> remains challenging. <b>Human data</b>, with its rich diversity of manipulation behaviors, offers a valuable resource for this purpose. While previous works show that using human data can bring benefits, such as improving robustness and training efficiency, it remains unclear whether it can realize its greatest advantage: enabling robot policies to directly learn new motions for task completion. In this paper, we systematically explore this potential through multi-task human-robot cotraining. We introduce <b>MotionTrans</b>, a framework that includes a <b>data collection system</b>, a <b>human data transformation pipeline</b>, and a <b>weighted cotraining strategy</b>. By cotraining 30 human-robot tasks simultaneously, we directly <b>transfer more than 10 motions</b> from human data to deployable <b>end-to-end robot policies</b>. Notably, 9 tasks achieve non-trivial success rates in <b>zero-shot</b> manner. MotionTrans also significantly enhances <b>pretraining–finetuning performance</b> (<b>+40% success rate</b>). Through ablation study, we identify key factors for successful motion learning: cotraining with robot data. These findings unlock the potential of <b>motion-level learning</b> from human data, offering insights into its effective use for training robotic manipulation policies. <b>All data, code, and model weights are open-sourced.</b>
+                Robust perception and dynamics modeling are fundamental to real-world robotic policy learning. 
+                Recent methods employ video diffusion models (VDMs) to enhance robotic policies, improving their understanding and modeling of the physical world.
+                However, existing approaches overlook the coherent and physically consistent motion representations inherently encoded across frames in VDMs.
+                To this end, we propose Video2Act, a framework that efficiently guides robotic action learning by explicitly integrating spatial and motion-aware representations.
+                Building on the inherent representations of VDMs, we extract foreground boundaries and inter-frame motion variations while filtering out background noise and task-irrelevant biases.
+                These refined representations are then used as additional conditioning inputs to a diffusion transformer (DiT) action head, enabling it to reason about what to manipulate and how to move.
+                To mitigate inference inefficiency, we propose an asynchronous dual-system design, where the VDM functions as the slow System 2 and the DiT head as the fast System 1, working collaboratively to generate adaptive actions.
+                By providing motion-aware conditions to System 1, Video2Act maintains stable manipulation even with low-frequency updates from the VDM.
+                For evaluation, Video2Act surpasses previous state-of-the-art VLA methods by 7.7% in simulation and 21.7% in real-world tasks in terms of average success rate, further exhibiting strong generalization capabilities.
               </p>
             </div>
           </div>
@@ -330,7 +338,7 @@
       <h2 class="title is-2 mt-title">Motion-Level Learning from Human Demonstrations</h2>
     <div class="mt-card w-70">
         <div class="mt-img-wrap">
-          <img src="./resources/main_method.png" alt="MotionTrans pipeline from VR human data to deployable robot policies">
+          <img src="./resources/pipline.png" alt="MotionTrans pipeline from VR human data to deployable robot policies">
         </div>
         <p style="text-align:center; margin-top:10px; font-weight:800; color:#111827;">
           From VR human demonstrations to deployable, zero/few-shot robot skills via a unified state–action space,
