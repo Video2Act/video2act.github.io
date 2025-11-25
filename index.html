@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-55NDKMPMDH"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-55NDKMPMDH');
+  </script>
+
+  <meta charset="utf-8">
+  <meta name="description" content="Video2Act: A Dual-System Video Diffusion Policy with Robotic Spatio-Motional Modeling">
+  <meta name="keywords" content="VLA, Video Diffusion, Policy learning">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <title>Video2Act</title>
+
+  <!-- Performance: preconnect fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- 首屏更快：预加载海报图 -->
+  <link rel="preload" as="image" href="resources/cover_poster.jpg">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- CSS libs -->
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <!-- Icons -->
+  <link rel="icon" href="./resources/Tsinghua_University-Logo_256x256.ico">
+  <script src="https://kit.fontawesome.com/006a5775d5.js" crossorigin="anonymous"></script>
+
+  <!-- JS libs -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="./static/js/ajax.googleapis.com_ajax_libs_jquery_3.5.1_jquery.min.js"></script>
+  <script src="./static/js/isInViewport.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+  <!-- ================== Styles ================== -->
+  <style>
+    :root{
+      --brand-size: clamp(64px, 10vw, 160px);
+      --title-rest-size: clamp(48px, 2.2vw, 36px);
+      --cover-subtitle-size: clamp(16px, 1.8vw, 28px);
+      --cover-side-gutter: 7vw;
+      --cover-max-width: 1400px;
+      --cover-title-weight: 800;
+      --title-gap: .35em;
+      --cover-top-offset: 0vh;
+      --cover-overlay-bg: rgba(0,0,0,0.0);
+      --cover-cta-gap: 10px;
+      --cover-shadow: 0 6px 28px rgba(0,0,0,.55);
+      --cover-text-shadow: 2px 2px 12px rgba(0,0,0,.65);
+    }
+
+    html, body { height: 100%; margin: 0; font-family: "Google Sans","Noto Sans",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
+    * { box-sizing: border-box; }
+
+    /* 平滑滚动与锚点偏移 */
+    html{ scroll-behavior: smooth; }
+    section[id], header#top{ scroll-margin-top: 80px; }
+
+    /* ========= 导航栏整条透明（含下拉） ========= */
+    .navbar { position: fixed; top:0; left:0; right:0; z-index: 30; background: transparent !important; box-shadow: none; }
+    .navbar.is-transparent { background: transparent !important; }
+    .navbar-menu { background: transparent !important; }
+    .navbar-item, .navbar-link { color:#fff !important; }
+    .navbar-item:hover, .navbar-link:hover { background: transparent !important; text-decoration: underline; }
+    .navbar-dropdown{
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      padding-top: .25rem; padding-bottom: .25rem;
+    }
+    .navbar-dropdown .navbar-item{ color:#fff !important; }
+    .navbar-dropdown .navbar-item:hover{ background: transparent !important; text-decoration: underline; }
+    .navbar-menu.is-active{ background: transparent !important; }
+
+    /* 可访问性：跳到内容 */
+    .skip-link{ position:absolute; left:-9999px; top:0; background:#000; color:#fff; padding:8px 12px; border-radius:8px; }
+    .skip-link:focus{ left:12px; z-index:9999; }
+
+    /* ===== 封面 ===== */
+    .cover { position: relative; width: 100%; height: 100svh; min-height: 580px; overflow: hidden; background: #000; }
+    .cover video, .cover img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(1.05) contrast(1.02) brightness(.92); }
+    .cover__overlay {
+      position: absolute; inset: 0; display: grid; place-items: center;
+      padding-left: var(--cover-side-gutter); padding-right: var(--cover-side-gutter);
+      background: linear-gradient(to bottom, rgba(0,0,0,.15) 0%, rgba(0,0,0,.35) 60%, rgba(0,0,0,.5) 100%);
+    }
+    .cover__content {
+      width: min(var(--cover-max-width), calc(100% - 2*var(--cover-side-gutter)));
+      margin-top: var(--cover-top-offset);
+      text-align: center; color: #fff; text-shadow: var(--cover-text-shadow);
+      padding: 18px 0; background: var(--cover-overlay-bg); border-radius: 12px;
+    }
+    .cover__title { display: flex; flex-direction: column; align-items: center; margin: 0 0 12px 0; }
+
+    /* ===== 纯紫色外描边：双层文本法（无内描边、清晰抗锯齿） ===== */
+    :root{
+      --brand-stroke: 12px;
+      --brand-stroke-color: #7c3aed;
+    }
+    .cover__title .brand{
+      position: relative;
+      display: inline-block;
+      font-size: var(--brand-size);
+      font-weight: var(--cover-title-weight);
+      line-height: 1.03;
+      letter-spacing: -0.02em;
+    }
+    .cover__title .brand__fill{
+      position: relative; z-index: 2;
+      color: #fff; -webkit-text-fill-color:#fff;
+      text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
+    }
+    .cover__title .brand__stroke{
+      position: absolute; inset: 0; z-index: 1;
+      color: transparent; -webkit-text-fill-color: transparent;
+      -webkit-text-stroke: var(--brand-stroke) var(--brand-stroke-color);
+      pointer-events: none;
+    }
+    @media (max-width: 768px){ :root{ --brand-stroke: 2px; } }
+
+    .cover__title .rest { margin-top: var(--title-gap); font-size: var(--title-rest-size); line-height: 1.2; font-weight: 500; opacity: .98; }
+    .cover__title .rest .line { display: block; }
+
+    .cover__subtitle { font-size: var(--cover-subtitle-size); font-weight: 500; opacity: .96; margin-top: 14px; }
+    /* 只改作者名字链接为紫色并加粗 */
+    .cover__subtitle a{ color:#4B70F5 !important; text-decoration:none; font-weight:700; }
+    .cover__subtitle a:hover{ text-decoration:underline; opacity:.9; }
+
+    .cover__meta { font-size: clamp(18px, 1.1vw, 24px); opacity: .9; margin-top: 10px; margin-bottom: 20px; }
+    .cover__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--cover-cta-gap); margin-top: 6px; }
+    .cover__btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.6); color: #fff; text-decoration: none; backdrop-filter: blur(4px); background: rgba(0,0,0,.25); transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease; box-shadow: var(--cover-shadow); font-size: 14px; line-height: 1; }
+    .cover__btn:hover { transform: translateY(-2px); background: rgba(255,255,255,.08); border-color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    .section--after-cover { padding-block: 48px; }
+
+    /* ===== 封面媒体层：先显示 poster，视频 ready 后渐显 ===== */
+    .cover__media{ position:absolute; inset:0; }
+    .cover__poster,
+    .cover__media video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+    .cover__media video{ opacity:0; transition:opacity .35s ease; }
+    .cover__media video.is-ready{ opacity:1; }
+
+    /* Video pager base */
+    .video-pager .vp-page { display: none; }
+    .video-pager .vp-page.active { display: block; }
+    .vp-controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 8px 0 16px; }
+    .vp-btn { border: none; width: 40px; height: 40px; border-radius: 999px; background: #222; color: #fff; line-height: 40px; text-align: center; font-size: 20px; cursor: pointer; }
+    .vp-btn:focus { outline: 2px solid #888; }
+    .vp-dots { display: flex; gap: 10px; align-items: center; }
+    .vp-dot { width: 10px; height: 10px; border-radius: 50%; background: #cfcfcf; cursor: pointer; }
+    .vp-dot.active { background: #333; }
+
+    /* 图片/视频淡入（+iframe） */
+    .mt-img-wrap img, .rvp-video video, .media-fixed, .mt-fig img, .ht-card video, .mt-video-wrap iframe { opacity:0; transition: opacity .25s ease; }
+    .is-ready { opacity:1 !important; }
+
+    /* ===== 全局主题卡片/标题 ===== */
+    .mt-section { position: relative; }
+    .mt-card{ background: linear-gradient(180deg, #ffffff, #fafafa); border: 1px solid #e5e7eb; border-radius: 16px; box-shadow: 0 10px 32px rgba(0,0,0,.08); padding: 18px; transition: transform .18s ease, box-shadow .18s ease; }
+    .mt-card.compact{ padding:14px; }
+    .mt-card:hover{ transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,.12); }
+
+    .mt-title{ display: table; margin: 0 auto 14px auto; padding-bottom: 6px; position: relative; text-align: center !important; }
+    .mt-title::after{ content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:-4px; width: 120px; height: 3px; border-radius: 999px; background: linear-gradient(90deg, #7c3aed, #06b6d4); }
+
+    .mt-video-wrap, .mt-img-wrap{ position: relative; width: 100%; border-radius: 12px; overflow: hidden; }
+    .mt-video-wrap{ aspect-ratio: 16 / 9; }
+    .mt-video-wrap video, .mt-img-wrap img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+    .mt-video-wrap iframe{ width:100%; height:100%; border:0; display:block; } /* NEW: 让 iframe 适配容器 */
+
+    .mt-badge{ position: absolute; top: 10px; left: 10px; padding: 6px 10px; border-radius: 999px; background: rgba(0,0,0,.55); color:#fff; font-size:12px; letter-spacing:.2px; box-shadow: 0 2px 8px rgba(0,0,0,.25); user-select: none; }
+
+    .mt-fig-grid{ display:grid; grid-template-columns: 1fr; gap:24px; max-width:1100px; margin:0 auto; }
+    .mt-fig{ margin:0; background:#fff; border-radius:12px; overflow:hidden; box-shadow: 0 8px 28px rgba(0,0,0,.12); }
+    .mt-fig img{ width:100%; height:auto; display:block; }
+    .mt-fig figcaption{ padding:10px 14px; font-size:.95rem; color:#6b7280; text-align:center; background:#fafafa; }
+
+    @media (min-width: 1024px){ .w-70 { width: 70%; margin-left:auto; margin-right:auto; } }
+
+    /* ===== Human / Robot Tasks（卡片网格基样式在各自作用域内再细化） ===== */
+  </style>
+</head>
+
+<body>
+
+  <!-- Skip to content -->
+  <a class="skip-link" href="#abstract">Skip to content</a>
+
+  <!-- ===== 透明导航栏（含下拉全透明、白字） ===== -->
+  <nav class="navbar is-transparent" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+        <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div class="navbar-menu">
+      <div class="navbar-start" style="flex-grow:1; justify-content:center;">
+        <a class="navbar-item" href="#top" aria-label="Home"><span class="icon"><i class="fas fa-home"></i></span></a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">Our Related Research</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://general-flow.github.io/" target="_blank" rel="noopener">General Flow</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ================== Hero Cover ================== -->
+  <header id="top" class="cover" aria-label="Hero cover">
+    <div class="cover__media" aria-hidden="true">
+      <img class="cover__poster" src="resources/cover_poster.jpg" alt="">
+      <video id="bg-video"
+             autoplay
+             loop
+             muted
+             playsinline
+             preload="none"
+             poster="resources/cover_poster.jpg">
+        <source data-src="resources/cover.mp4"  type="video/mp4">
+      </video>
+    </div>
+
+    <div class="cover__overlay">
+      <div class="cover__content">
+        <h1 class="cover__title" aria-label="MotionTrans: Human VR Data Enable Motion-Level Learning for Robotic Manipulation Policies">
+          <span class="brand" aria-label="MotionTrans">
+            <span class="brand__fill">MotionTrans</span>
+            <span class="brand__stroke" aria-hidden="true">MotionTrans</span>
+          </span>
+
+          <span class="rest">
+            <span class="line">Human VR Data Enable Motion-Level Learning</span>
+            <span class="line">for Robotic Manipulation Policies</span>
+          </span>
+        </h1>
+
+        <!-- ===== Authors ===== -->
+        <div class="cover__subtitle" id="authors-line">
+          <a href="https://michaelyuancb.github.io/">Chengbo Yuan</a><sup>1,2</sup>&nbsp;&nbsp;&nbsp;
+          <a href="https://zhourui9813.github.io/">Rui Zhou</a><sup>*5</sup>&nbsp;&nbsp;&nbsp;
+          <a href="https://scholar.google.com/citations?hl=zh-CN&user=AUVUNusAAAAJ">Mengzhen Liu</a><sup>*3</sup>&nbsp;&nbsp;&nbsp;
+          <a href="https://yingdong-hu.github.io/">Yingdong Hu</a><sup>1,2</sup>&nbsp;&nbsp;&nbsp;
+          <a href="https://shengjiewang-jason.github.io/">Shengjie Wang</a><sup>1,2</sup>&nbsp;&nbsp;&nbsp;
+          <a href="https://ericyi.github.io/">Li Yi</a><sup>1,2</sup>&nbsp;&nbsp;&nbsp;
+          <a href="https://alvinwen428.github.io/">Chuan Wen</a><sup>4</sup>&nbsp;&nbsp;&nbsp;
+          <a href="https://www.shanghangzhang.com/">Shanghang Zhang</a><sup>3</sup>&nbsp;&nbsp;&nbsp;
+          <a href="https://people.iiis.tsinghua.edu.cn/~gaoyang/yang-gao.weebly.com/index.html">Yang Gao</a><sup>1,2</sup><sup>&dagger;</sup>
+        </div>
+
+        <div class="cover__meta">
+          <sup>1</sup> Institute for Interdisciplinary Information Sciences, Tsinghua University&nbsp;&nbsp;
+          <sup>2</sup> Shanghai Qi Zhi Institute<br>
+          <sup>3</sup> State Key Laboratory of Multimedia Information Processing, School of Computer Science, Peking University<br>
+          <sup>4</sup> Shanghai Jiao Tong University&nbsp;&nbsp;
+          <sup>5</sup> Wuhan University<br>
+          <span class="has-text-grey" style="font-size:.9em;">* Equal contribution <span style="font-family:serif;">†</span> Corresponding author</span>
+        </div>
+
+        <div class="cover__actions">
+          <a class="cover__btn" href="./resources/Arxiv_MotionTrans.pdf" target="_blank" rel="noopener"><i class="fas fa-file-pdf"></i><span>Paper (PDF)</span></a>
+          <a class="cover__btn" href="https://arxiv.org/abs/2509.17759" target="_blank" rel="noopener"><i class="ai ai-arxiv"></i><span>arXiv</span></a>
+          <a class="cover__btn" href="https://github.com/michaelyuancb/motiontrans" target="_blank" rel="noopener"><i class="fab fa-github"></i><span>Code</span></a>
+          <a class="cover__btn" href="https://github.com/michaelyuancb/motiontrans-pi0" target="_blank" rel="noopener"><i class="fas fa-code"></i><span>VLA Code</span></a>
+          <a class="cover__btn" href="https://huggingface.co/datasets/michaelyuanqwq/motiontrans" target="_blank" rel="noopener"><img src="resources/hf-logo.png" alt="" style="width:1em;height:1em;"><span>Datasets</span></a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================== Project Video (YouTube) ================== -->
+  <section class="section mt-section section--after-cover" id="teaser">
+    <div class="container">
+      <h2 class="title is-2 mt-title">Project Video</h2>
+      <div class="mt-card w-70">
+        <div class="mt-video-wrap">
+          <iframe
+            data-yt
+            title="MotionTrans — Project Video"
+            loading="lazy"
+            src="https://www.youtube.com/embed/-kLJIXnBwOw?rel=0&modestbranding=1&playsinline=1"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <p style="text-align:center; margin-top:10px; font-weight:800; color:#111827;">
+          Teaser / Project video
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== Abstract ================== -->
+  <section class="section mt-section" id="abstract">
+    <div class="container">
+      <h2 class="title is-2 mt-title">Abstract</h2>
+      <div class="columns is-centered">
+        <div class="column is-two-thirds">
+          <div class="mt-card" style="backdrop-filter: blur(4px); background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.9)); border-left:4px solid #7c3aed;">
+            <div class="content has-text-justified" style="margin:0;">
+              <p>
+                Scaling real robot data is a key bottleneck in imitation learning, leading to the use of auxiliary data for policy training. While other aspects of robotic manipulation such as image or language understanding may be learned from internet-based datasets, acquiring <b>motion knowledge</b> remains challenging. <b>Human data</b>, with its rich diversity of manipulation behaviors, offers a valuable resource for this purpose. While previous works show that using human data can bring benefits, such as improving robustness and training efficiency, it remains unclear whether it can realize its greatest advantage: enabling robot policies to directly learn new motions for task completion. In this paper, we systematically explore this potential through multi-task human-robot cotraining. We introduce <b>MotionTrans</b>, a framework that includes a <b>data collection system</b>, a <b>human data transformation pipeline</b>, and a <b>weighted cotraining strategy</b>. By cotraining 30 human-robot tasks simultaneously, we directly <b>transfer more than 10 motions</b> from human data to deployable <b>end-to-end robot policies</b>. Notably, 9 tasks achieve non-trivial success rates in <b>zero-shot</b> manner. MotionTrans also significantly enhances <b>pretraining–finetuning performance</b> (<b>+40% success rate</b>). Through ablation study, we identify key factors for successful motion learning: cotraining with robot data. These findings unlock the potential of <b>motion-level learning</b> from human data, offering insights into its effective use for training robotic manipulation policies. <b>All data, code, and model weights are open-sourced.</b>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== MotionTrans Pipeline ================== -->
+  <section class="section mt-section" id="unified-human-centric">
+    <div class="container">
+      <h2 class="title is-2 mt-title">Motion-Level Learning from Human Demonstrations</h2>
+    <div class="mt-card w-70">
+        <div class="mt-img-wrap">
+          <img src="./resources/main_method.png" alt="MotionTrans pipeline from VR human data to deployable robot policies">
+        </div>
+        <p style="text-align:center; margin-top:10px; font-weight:800; color:#111827;">
+          From VR human demonstrations to deployable, zero/few-shot robot skills via a unified state–action space,
+          human→robot data transformation, and weighted multi-task co-training.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== Zero-shot ================== -->
+  <section class="section mt-section" id="zero-shot">
+    <div class="container">
+      <h2 class="title is-2 mt-title">MotionTrans Zero-Shot Inference Results on Real Robot</h2>
+      <p class="has-text-grey" style="text-align:center; margin-bottom:12px;">
+        (Left: Human Data · Middle: MotionTrans-DP · Right: MotionTrans-Pi0-VLA)
+      </p>
+
+      <div class="mt-card" id="zeroShotBlock">
+        <style>
+          .mt-seg-title{ display:flex; align-items:center; gap:10px; margin: 6px 0 12px; font-weight:800; color:#374151; letter-spacing:.2px; }
+          .mt-seg-title::before{ content:""; width:10px; height:10px; border-radius:50%; background: linear-gradient(90deg, #7c3aed, #06b6d4); box-shadow: 0 0 0 4px rgba(124,58,237,.12); }
+
+          #resultVideoPager{ --gap: 24px; --badge-bg: rgba(0,0,0,.55); --badge-shadow: 0 2px 8px rgba(0,0,0,.25); }
+          #resultVideoPager .rvp-task{ text-align:center; margin:0 0 12px; font-weight:700; line-height:1.2; }
+          #resultVideoPager .rvp-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap); }
+          #resultVideoPager .rvp-item{ display:flex; flex-direction:column; }
+          #resultVideoPager .rvp-video{ position:relative; width:100%; aspect-ratio:16/9; border-radius:10px; overflow:hidden; background:#000; }
+          #resultVideoPager .rvp-video video{ width:100%; height:100%; object-fit:cover; display:block; }
+          #resultVideoPager .rvp-badge{ position:absolute; top:10px; left:10px; padding:6px 10px; border-radius:999px; background: var(--badge-bg); color:#fff; font-size:12px; letter-spacing:.2px; box-shadow: var(--badge-shadow); user-select:none; }
+          #resultVideoPager .rvp-caption{ text-align:center; margin-top:6px; font-size:.95rem; color:#6b7280; }
+          #resultVideoPager .vp-controls{ margin: 6px 0 16px; }
+
+          #zero-shot .fig-grid{ display:grid; grid-template-columns: 1fr; gap:24px; max-width:1100px; margin:0 auto; }
+          #zero-shot figure{ margin:0; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 8px 28px rgba(0,0,0,.12); }
+          #zero-shot img{ width:100%; height:auto; display:block; }
+          #zero-shot figcaption{ padding:10px 14px; font-size:.95rem; color:#6b7280; text-align:center; background:#fafafa; }
+
+          /* —— Zero-shot 搜索栏 —— */
+          #zs-tools .ht-toolbar{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:center; margin:12px auto 18px; max-width:980px; }
+          #zs-tools .ht-select{ padding:10px 14px; border:1px solid #e5e7eb; border-radius:999px; background:#fff; font-size:14px; min-width:280px; outline:none; box-shadow:0 2px 8px rgba(0,0,0,.04); }
+          #zs-tools .ht-go{ padding:10px 16px; border:1px solid #e5e7eb; border-radius:999px; background:#111; color:#fff; font-size:14px; line-height:1; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.06); transition: transform .15s ease, opacity .15s ease; }
+          #zs-tools .ht-go:hover{ transform: translateY(-1px); }
+          #zs-tools .ht-go:disabled{ opacity:.5; cursor:not-allowed; }
+          #resultVideoPager .flash{ box-shadow: 0 0 0 3px #7c3aed inset, 0 10px 26px rgba(124,58,237,.25); transition: box-shadow .25s ease; }
+        </style>
+
+        <!-- Zero-shot 搜索栏 -->
+        <div id="zs-tools">
+          <div class="ht-toolbar">
+            <select id="zs-filter" class="ht-select" aria-label="Jump to a zero-shot task">
+              <option value="" selected disabled>— Jump to a task —</option>
+            </select>
+            <button type="button" id="zs-go" class="ht-go" disabled>Go</button>
+          </div>
+        </div>
+
+        <div class="mt-seg-title">Videos</div>
+        <div id="resultVideoPager" class="video-pager" aria-label="Zero-shot qualitative video pager">
+          <div class="vp-controls">
+            <button class="vp-btn vp-prev" aria-label="Previous task">‹</button>
+            <div class="vp-dots" role="tablist" aria-label="Task pages"></div>
+            <button class="vp-btn vp-next" aria-label="Next task">›</button>
+          </div>
+        </div>
+
+        <div class="mt-seg-title" style="margin-top:18px;">Quantitative Results</div>
+        <div class="fig-grid">
+          <figure>
+            <img src="./resources/experiment_results/zeroshot_sr.png" alt="Zero-shot success rate across tasks" loading="lazy">
+            <figcaption>Zero-shot <b>Success Rate</b> (SR, %) across tasks. Comparison between MotionTrans-DP (blue) and MotionTrans-π0-VLA (pink).</figcaption>
+          </figure>
+          <figure>
+            <img src="./resources/experiment_results/zeroshot_score.png" alt="Zero-shot motion progress score across tasks" loading="lazy">
+            <figcaption>Zero-shot Motion Progress <b>Score</b> across tasks. Comparison between MotionTrans-DP (red) and MotionTrans-π0-VLA (yellow).</figcaption>
+          </figure>
+        </div>
+
+        <script>
+          (function () {
+            const pager = document.getElementById('resultVideoPager');
+            if (!pager) return;
+
+            const tasks = [
+              { title: "Orange → Green Bucket", human: "resources/human_data/put_orange_to_the_green_bucket_0.mp4", dp0: "resources/infer_video_960x540/orange_bucket_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/orange_bucket_pi0_960x540.mp4" },
+              { title: "Unplug Charger", human: "resources/human_data/unplug_the_white_charger_0.mp4", dp0: "resources/infer_video_960x540/unplug_charger_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/unplug_charger_pi0_960x540.mp4" },
+              { title: "Close Laptop", human: "resources/human_data/close_silver_laptop_0.mp4", dp0: "resources/infer_video_960x540/close_laptop_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/close_laptop_pi0_960x540.mp4" },
+              { title: "Banana → White Plate", human: "resources/human_data/put_banana_to_the_white_plate_0.mp4", dp0: "resources/infer_video_960x540/banana_plate_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/banana_plate_pi0_960x540.mp4" },
+              { title: "Open Box → Put Toy Panda", human: "resources/human_data/first_open_the_white_cap_style_box_then_put_toy_panda_to_the_box_0.mp4", dp0: "resources/infer_video_960x540/box_panda_box_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/box_panda_box_pi0_960x540.mp4" },
+              { title: "Press Dice", human: "resources/human_data/press_red_dice_to_make_it_rotation_0.mp4", dp0: "resources/infer_video_960x540/press_dice_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/press_dice_pi0_960x540.mp4" },
+              { title: "Pour Bottle to Bowl", human: "resources/human_data/pour_bottle_to_the_pink_bowl.mp4", dp0: "resources/infer_video_960x540/pour_bottle_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/pour_bottle_pi0_960x540.mp4" },
+              { title: "Bread-Bucket", human: "resources/human_data/drop_bread_to_the_green_bucket_0.mp4", dp0: "resources/infer_video_960x540/bread_bucket_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/bread_bucket_pi0_960x540.mp4" },
+              { title: "Press Stapler", human: "resources/human_data/press_the_stapler_0.mp4", dp0: "resources/infer_video_960x540/press_stapler_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/press_stapler_pi0_960x540.mp4" },
+              { title: "Mango → Pink Bowl (Bypass)", human: "resources/human_data/put_mango_to_pink_bowl_while_avoiding_obstacle_by_bypassing_0.mp4", dp0: "resources/infer_video_960x540/mango_bypass_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/mango_bypass_pi0_960x540.mp4" },
+              { title: "Mango → Pink Bowl (Lift)", human: "resources/human_data/put_mango_to_the_pink_bowl_while_avoiding_obstacle_by_lifting.mp4", dp0: "resources/infer_video_960x540/mango_bypass_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/mango_bypass_pi0_960x540.mp4" },
+              { title: "Toy Bear → Black Box", human: "resources/human_data/put_toy_bear_to_the_black_box_0.mp4", dp0: "resources/infer_video_960x540/mango_lift_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/mango_lift_pi0_960x540.mp4" },
+              { title: "Wipe Towel", human: "resources/human_data/wipe_blue_towel_on_the_table_and_push_it_to_the_bulky_bottle_0.mp4", dp0: "resources/infer_video_960x540/wipe_towel_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/wipe_towel_pi0_960x540.mp4" },
+            ];
+
+            const prev = pager.querySelector('.vp-prev');
+            const next = pager.querySelector('.vp-next');
+            const dotsWrap = pager.querySelector('.vp-dots');
+
+            const zsSelect = document.getElementById('zs-filter');
+            const zsGo = document.getElementById('zs-go');
+            tasks.forEach((t, i) => {
+              const opt = document.createElement('option'); opt.value = String(i); opt.textContent = t.title; zsSelect.appendChild(opt);
+            });
+
+            const frag = document.createDocumentFragment();
+            tasks.forEach((t, i) => {
+              const page = document.createElement('div');
+              page.className = 'vp-page' + (i === 0 ? ' active' : '');
+              page.id = 'rvp-page-' + (i + 1);
+              page.innerHTML = `
+                <h3 class="rvp-task">${t.title}</h3>
+                <div class="rvp-grid">
+                  <div class="rvp-item">
+                    <div class="rvp-video">
+                      <span class="rvp-badge">Human Data</span>
+                      <video autoplay muted loop playsinline controls preload="metadata" src="${t.human}"></video>
+                    </div>
+                  </div>
+                  <div class="rvp-item">
+                    <div class="rvp-video">
+                      <span class="rvp-badge">MotionTrans-DP</span>
+                      <video autoplay muted loop playsinline controls preload="metadata" src="${t.dp0}"></video>
+                    </div>
+                    <div class="rvp-caption">MotionTrans-DP · Zero Shot</div>
+                  </div>
+                  <div class="rvp-item">
+                    <div class="rvp-video">
+                      <span class="rvp-badge">MotionTrans-Pi0-VLA</span>
+                      <video autoplay muted loop playsinline controls preload="metadata" src="${t.pi0}"></video>
+                    </div>
+                    <div class="rvp-caption">MotionTrans-Pi0-VLA · Zero Shot</div>
+                  </div>
+                </div>
+              `;
+              frag.appendChild(page);
+            });
+            pager.appendChild(frag);
+
+            dotsWrap.innerHTML = '';
+            const pages = Array.from(pager.querySelectorAll('.vp-page'));
+            pages.forEach((p, k) => {
+              const dot = document.createElement('span');
+              dot.className = 'vp-dot' + (k === 0 ? ' active' : '');
+              dot.setAttribute('role', 'tab');
+              dot.setAttribute('aria-selected', k === 0 ? 'true' : 'false');
+              dot.setAttribute('aria-controls', p.id);
+              dot.addEventListener('click', () => show(k));
+              dotsWrap.appendChild(dot);
+            });
+            const dots = Array.from(dotsWrap.querySelectorAll('.vp-dot'));
+
+            let idx = 0;
+            function pauseHiddenPages(except) { pages.forEach((pg, k) => { if (k !== except) { pg.querySelectorAll('video').forEach(v => { try{ v.pause(); v.currentTime = 0; } catch(e){} }); } }); }
+            function playVisiblePage(i) { pages[i].querySelectorAll('video').forEach(v => { try{ v.currentTime = 0; v.play(); } catch(e){} }); }
+            function show(i) {
+              pages[idx].classList.remove('active'); dots[idx].classList.remove('active'); dots[idx].setAttribute('aria-selected', 'false');
+              idx = (i + pages.length) % pages.length;
+              pages[idx].classList.add('active'); dots[idx].classList.add('active'); dots[idx].setAttribute('aria-selected', 'true');
+              pauseHiddenPages(idx); playVisiblePage(idx);
+            }
+            prev.addEventListener('click', () => show(idx - 1));
+            next.addEventListener('click', () => show(idx + 1));
+            pager.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') show(idx - 1); if (e.key === 'ArrowRight') show(idx + 1); });
+            pauseHiddenPages(0); playVisiblePage(0);
+
+            function flashPage(i){ const vids = pages[i].querySelectorAll('.rvp-video'); vids.forEach(v => v.classList.add('flash')); setTimeout(() => vids.forEach(v => v.classList.remove('flash')), 1200); pages[i].scrollIntoView({behavior:'smooth', block:'nearest'}); }
+            zsSelect.addEventListener('change', () => { zsGo.disabled = !zsSelect.value; if (zsSelect.value !== '') { const i = parseInt(zsSelect.value, 10); show(i); flashPage(i); } });
+            zsGo.addEventListener('click', () => { if (zsSelect.value !== '') { const i = parseInt(zsSelect.value, 10); show(i); flashPage(i); } });
+            zsGo.disabled = !zsSelect.value;
+          })();
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== Few-shot ================== -->
+  <section class="section mt-section" id="fewshot">
+    <div class="container">
+      <h2 class="title is-2 mt-title">MotionTrans Few-Shot Inference Results on Real Robot</h2>
+      <p class="has-text-grey" style="text-align:center; margin-bottom:12px;">
+        (Left: Human Data · Right: MotionTrans-DP, few-shot)
+      </p>
+
+      <div class="mt-card" id="fewShotBlock">
+        <style>
+          .mt-seg-title{ display:flex; align-items:center; gap:10px; margin: 6px 0 12px; font-weight:800; color:#374151; letter-spacing:.2px; }
+          .mt-seg-title::before{ content:""; width:10px; height:10px; border-radius:50%; background: linear-gradient(90deg, #7c3aed, #06b6d4); box-shadow: 0 0 0 4px rgba(124,58,237,.12); }
+
+          #fewshotVideoPager{ --gap: 24px; --badge-bg: rgba(0,0,0,.55); --badge-shadow: 0 2px 8px rgba(0,0,0,.25); --frame-border: #e5e7eb; --frame-title: #374151; --frame-bg: #fff; }
+          #fewshotVideoPager .rvp-task{ text-align:center; margin:0 0 12px; font-weight:800; line-height:1.2; }
+          #fewshotVideoPager .rvp-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap); }
+          @media (max-width: 768px){ #fewshotVideoPager .rvp-grid{ grid-template-columns: 1fr; } }
+          #fewshotVideoPager .rvp-frame{ background: var(--frame-bg); border: 1px solid var(--frame-border); border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.08); padding: 14px 16px 16px; display:flex; flex-direction:column; }
+          #fewshotVideoPager .rvp-frame-title{ font-size:1.1rem; font-weight:800; color:var(--frame-title); margin:2px 0 10px; letter-spacing:.2px; text-align:left; }
+          #fewshotVideoPager .rvp-item{ display:flex; flex-direction:column; }
+          #fewshotVideoPager .rvp-video{ position:relative; width:100%; aspect-ratio:16/9; border-radius:12px; overflow:hidden; background:#000; }
+          #fewshotVideoPager .rvp-video video{ width:100%; height:100%; object-fit:cover; display:block; }
+          #fewshotVideoPager .rvp-badge{ position:absolute; top:10px; left:10px; padding:6px 10px; border-radius:999px; background:var(--badge-bg); color:#fff; font-size:12px; letter-spacing:.2px; box-shadow:var(--badge-shadow); user-select:none; }
+          #fewshotVideoPager .rvp-caption{ text-align:center; margin-top:6px; font-size:.95rem; color:#6b7280; }
+          #fewshotVideoPager .vp-controls{ margin:6px 0 16px; }
+
+          #fewshot .fig-grid{ display:grid; grid-template-columns: 1fr; gap:24px; max-width:1100px; margin:0 auto; }
+          #fewshot figure{ margin:0; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 8px 28px rgba(0,0,0,.12); }
+          #fewshot img{ width:100%; height:auto; display:block; }
+          #fewshot figcaption{ padding:10px 14px; font-size:.95rem; color:#6b7280; text-align:center; background:#fafafa; }
+
+          #fs-tools .ht-toolbar{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:center; margin:12px auto 18px; max-width:980px; }
+          #fs-tools .ht-select{ padding:10px 14px; border:1px solid #e5e7eb; border-radius:999px; background:#fff; font-size:14px; min-width:280px; outline:none; box-shadow:0 2px 8px rgba(0,0,0,.04); }
+          #fs-tools .ht-go{ padding:10px 16px; border:1px solid #e5e7eb; border-radius:999px; background:#111; color:#fff; font-size:14px; line-height:1; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.06); transition: transform .15s ease, opacity .15s ease; }
+          #fs-tools .ht-go:hover{ transform: translateY(-1px); }
+          #fs-tools .ht-go:disabled{ opacity:.5; cursor:not-allowed; }
+          #fewshotVideoPager .flash{ box-shadow: 0 0 0 3px #7c3aed inset, 0 10px 26px rgba(124,58,237,.25); transition: box-shadow .25s ease; }
+        </style>
+
+        <div id="fs-tools">
+          <div class="ht-toolbar">
+            <select id="fs-filter" class="ht-select" aria-label="Jump to a few-shot task">
+              <option value="" selected disabled>— Jump to a task —</option>
+            </select>
+            <button type="button" id="fs-go" class="ht-go" disabled>Go</button>
+          </div>
+        </div>
+
+        <div class="mt-seg-title">Videos</div>
+        <div id="fewshotVideoPager" class="video-pager" aria-label="Few-shot qualitative video pager">
+          <div class="vp-controls">
+            <button class="vp-btn vp-prev" aria-label="Previous task">‹</button>
+            <div class="vp-dots" role="tablist" aria-label="Task pages"></div>
+            <button class="vp-btn vp-next" aria-label="Next task">›</button>
+          </div>
+        </div>
+
+        <div class="mt-seg-title" style="margin-top:18px;">Quantitative Results</div>
+        <div class="fig-grid">
+          <figure>
+            <img src="./resources/experiment_results/main_fewshot_result_score.png" alt="Few-shot motion progress score across tasks and average" loading="lazy">
+            <figcaption>Few-shot Motion Progress <b>Score</b> (higher is better).</figcaption>
+          </figure>
+          <figure>
+            <img src="./resources/experiment_results/main_fewshot_result_sr.png" alt="Few-shot success rate across tasks and average" loading="lazy">
+            <figcaption>Few-shot <b>Success Rate</b> (SR, %) across tasks and average.</figcaption>
+          </figure>
+        </div>
+
+        <script>
+          (function () {
+            const pager = document.getElementById('fewshotVideoPager');
+            if (!pager) return;
+
+            const tasks = [
+              { title: "Orange → Green Bucket", human: "resources/human_data/put_orange_to_the_green_bucket_0.mp4", dp0: "resources/infer_video_960x540/orange_bucket_dp20_960x540.mp4" },
+              { title: "Unplug Charger", human: "resources/human_data/unplug_the_white_charger_0.mp4", dp0: "resources/infer_video_960x540/unplug_charger_dp20_960x540.mp4" },
+              { title: "Close Laptop", human: "resources/human_data/close_silver_laptop_0.mp4", dp0: "resources/infer_video_960x540/close_laptop_dp20_960x540.mp4" },
+              { title: "Banana → White Plate", human: "resources/human_data/put_banana_to_the_white_plate_0.mp4", dp0: "resources/infer_video_960x540/banana_plate_dp20_960x540.mp4" },
+              { title: "Open Box → Put Toy Panda", human: "resources/human_data/first_open_the_white_cap_style_box_then_put_toy_panda_to_the_box_0.mp4", dp0: "resources/infer_video_960x540/box_panda_box_dp20_960x540.mp4" },
+              { title: "Press Dice", human: "resources/human_data/press_red_dice_to_make_it_rotation_0.mp4", dp0: "resources/infer_video_960x540/press_dice_dp20_960x540.mp4" },
+              { title: "Pour Bottle to Bowl", human: "resources/human_data/pour_bottle_to_the_pink_bowl.mp4", dp0: "resources/infer_video_960x540/pour_bottle_dp20_960x540.mp4" },
+              { title: "Bread-Bucket", human: "resources/human_data/drop_bread_to_the_green_bucket_0.mp4", dp0: "resources/infer_video_960x540/bread_bucket_dp20_960x540.mp4" },
+              { title: "Press Stapler", human: "resources/human_data/press_the_stapler_0.mp4", dp0: "resources/infer_video_960x540/press_stapler_dp20_960x540.mp4" },
+              { title: "Mango → Pink Bowl (Bypass)", human: "resources/human_data/put_mango_to_pink_bowl_while_avoiding_obstacle_by_bypassing_0.mp4", dp0: "resources/infer_video_960x540/mango_bypass_dp20_960x540.mp4" },
+              { title: "Mango → Pink Bowl (Lift)", human: "resources/human_data/put_mango_to_the_pink_bowl_while_avoiding_obstacle_by_lifting.mp4", dp0: "resources/infer_video_960x540/mango_bypass_dp20_960x540.mp4" },
+              { title: "Toy Bear → Black Box", human: "resources/human_data/put_toy_bear_to_the_black_box_0.mp4", dp0: "resources/infer_video_960x540/mango_lift_dp20_960x540.mp4" },
+              { title: "Wipe Towel", human: "resources/human_data/wipe_blue_towel_on_the_table_and_push_it_to_the_bulky_bottle_0.mp4", dp0: "resources/infer_video_960x540/wipe_towel_dp20_960x540.mp4" },
+            ];
+
+            const prev = pager.querySelector('.vp-prev');
+            const next = pager.querySelector('.vp-next');
+            const dotsWrap = pager.querySelector('.vp-dots');
+
+            const fsSelect = document.getElementById('fs-filter');
+            const fsGo = document.getElementById('fs-go');
+            tasks.forEach((t, i) => { const opt = document.createElement('option'); opt.value = String(i); opt.textContent = t.title; fsSelect.appendChild(opt); });
+
+            const frag = document.createDocumentFragment();
+            tasks.forEach((t, i) => {
+              const page = document.createElement('div');
+              page.className = 'vp-page' + (i === 0 ? ' active' : '');
+              page.id = 'fvp-page-' + (i + 1);
+              page.innerHTML = `
+                <h3 class="rvp-task">${t.title}</h3>
+                <div class="rvp-grid">
+                  <div class="rvp-frame">
+                    <div class="rvp-frame-title">Human Demonstration</div>
+                    <div class="rvp-item">
+                      <div class="rvp-video">
+                        <span class="rvp-badge">Human Data</span>
+                        <video autoplay muted loop playsinline controls preload="metadata" src="${t.human}"></video>
+                      </div>
+                      <div class="rvp-caption">Human demonstration</div>
+                    </div>
+                  </div>
+                  <div class="rvp-frame">
+                    <div class="rvp-frame-title">Robot Inference (few-shot)</div>
+                    <div class="rvp-item">
+                      <div class="rvp-video">
+                        <span class="rvp-badge">MotionTrans-DP</span>
+                        <video autoplay muted loop playsinline controls preload="metadata" src="${t.dp0}"></video>
+                      </div>
+                      <div class="rvp-caption">MotionTrans-DP, few-shot</div>
+                    </div>
+                  </div>
+                </div>
+              `;
+              frag.appendChild(page);
+            });
+            pager.appendChild(frag);
+
+            dotsWrap.innerHTML = '';
+            const pages = Array.from(pager.querySelectorAll('.vp-page'));
+            pages.forEach((p, k) => {
+              const dot = document.createElement('span');
+              dot.className = 'vp-dot' + (k === 0 ? ' active' : '');
+              dot.setAttribute('role', 'tab');
+              dot.setAttribute('aria-selected', k === 0 ? 'true' : 'false');
+              dot.setAttribute('aria-controls', p.id);
+              dot.addEventListener('click', () => show(k));
+              dotsWrap.appendChild(dot);
+            });
+            const dots = Array.from(dotsWrap.querySelectorAll('.vp-dot'));
+
+            let idx = 0;
+            function pauseHiddenPages(except) { pages.forEach((pg, k) => { if (k !== except) { pg.querySelectorAll('video').forEach(v => { try{ v.pause(); v.currentTime = 0; }catch(e){} }); } }); }
+            function playVisiblePage(i) { pages[i].querySelectorAll('video').forEach(v => { try{ v.currentTime = 0; v.play(); }catch(e){} }); }
+            function show(i) {
+              pages[idx].classList.remove('active'); dots[idx].classList.remove('active'); dots[idx].setAttribute('aria-selected', 'false');
+              idx = (i + pages.length) % pages.length;
+              pages[idx].classList.add('active'); dots[idx].classList.add('active'); dots[idx].setAttribute('aria-selected', 'true');
+              pauseHiddenPages(idx); playVisiblePage(idx);
+            }
+            prev.addEventListener('click', () => show(idx - 1));
+            next.addEventListener('click', () => show(idx + 1));
+            pager.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') show(idx - 1); if (e.key === 'ArrowRight') show(idx + 1); });
+            pauseHiddenPages(0); playVisiblePage(0);
+
+            function flashPage(i){ const vids = pages[i].querySelectorAll('.rvp-video'); vids.forEach(v => v.classList.add('flash')); setTimeout(() => vids.forEach(v => v.classList.remove('flash')), 1200); pages[i].scrollIntoView({behavior:'smooth', block:'nearest'}); }
+            fsSelect.addEventListener('change', () => { fsGo.disabled = !fsSelect.value; if (fsSelect.value !== '') { const i = parseInt(fsSelect.value, 10); show(i); flashPage(i); } });
+            fsGo.addEventListener('click', () => { if (fsSelect.value !== '') { const i = parseInt(fsSelect.value, 10); show(i); flashPage(i); } });
+            fsGo.disabled = !fsSelect.value;
+          })();
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== Collecting Human and Robot Demonstrations ================== -->
+  <section class="section mt-section" id="collection">
+    <div class="container">
+      <h2 class="title is-2 mt-title">Collecting Human and Robot Demonstrations</h2>
+      <div class="mt-card">
+        <style>
+          .equal-height-row { align-items: stretch !important; }
+          .equal-height-row .col-eq { display: flex; }
+          .equal-height-row .col-eq .card { width: 100%; display: flex; flex-direction: column; }
+          .equal-height-row .card-body { display: flex; flex-direction: column; }
+          .equal-height-row .media-fixed { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: .5rem; }
+        </style>
+
+        <div class="row equal-height-row">
+          <div class="col-12 col-md-6 mb-4 col-eq">
+            <div class="card shadow-sm border-0 h-100">
+              <div class="card-body text-center">
+                <h5 class="mb-3">Hardware System: VR-based Human Data Capture + Single-arm Robot Platform</h5>
+                <img src="./resources/main_hardware.png" class="img-fluid media-fixed" alt="MotionTrans hardware overview">
+                <p class="mt-3 mb-0 text-muted small">
+                  We synchronize VR headset/controllers and multi-view cameras to capture 3D hand trajectories,
+                  egocentric video, and robot state with precise time alignment.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 mb-4 col-eq">
+            <div class="card shadow-sm border-0 h-100">
+              <div class="card-body text-center">
+                <h5 class="mb-3">Data Collection Demo</h5>
+                <video class="media-fixed" autoplay muted loop playsinline controls preload="metadata" poster="./resources/data_collection_poster.jpg">
+                  <source src="resources/human_data_collection/box_panda_box.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+                <p class="mt-3 mb-0 text-muted small">
+                  During collection we log hand keypoints, egocentric observations, and textual annotations under a unified clock,
+                  making downstream alignment and training straightforward.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="alert alert-light border rounded shadow-sm">
+              <h5 class="mb-2">MotionTrans Dataset at a Glance</h5>
+              <p class="mb-0">
+                We collected <b>3,213</b> demonstrations across <b>15</b> human tasks and <b>15</b> robot tasks in <b>10+</b> real-world scenes.
+                Tasks are grouped by motion-similar skill categories to support cross-embodiment (Human→Robot) co-training and transfer.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== Human Tasks ================== -->
+  <h3 class="title is-3" style="text-align:center; margin: 8px 0 12px;">Human Tasks</h3>
+
+  <div id="humanTasks" class="mt-card">
+    <style>
+      #humanTasks .ht-toolbar{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:center; margin:12px auto 18px; max-width:980px; }
+      #humanTasks .ht-select{ padding:10px 14px; border:1px solid #e5e7eb; border-radius: 999px; background:#fff; font-size:14px; min-width:280px; outline:none; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+      #humanTasks .ht-go{ padding:10px 16px; border:1px solid #e5e7eb; border-radius:999px; background:#111; color:#fff; font-size:14px; line-height:1; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.06); transition: transform .15s ease, opacity .15s ease; }
+      #humanTasks .ht-go:hover{ transform: translateY(-1px); }
+      #humanTasks .ht-go:disabled{ opacity:.5; cursor:not-allowed; }
+      #humanTasks .vp-controls{ display:flex; align-items:center; justify-content:center; gap:16px; margin: 6px 0 16px; }
+      #humanTasks .vp-btn{ border:none; width:40px; height:40px; border-radius:999px; background:#222; color:#fff; line-height:40px; text-align:center; font-size:20px; cursor:pointer; }
+      #humanTasks .vp-btn:focus{ outline:2px solid #888; }
+      #humanTasks .vp-dots{ display:flex; gap:10px; align-items:center; }
+      #humanTasks .vp-dot{ width:10px; height:10px; border-radius:50%; background:#cfcfcf; cursor:pointer; }
+      #humanTasks .vp-dot.active{ background:#333; }
+      #humanTasks .video-pager .vp-page{ display:none; }
+      #humanTasks .video-pager .vp-page.active{ display:block; }
+      #humanTasks .video-grid{ display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:24px; }
+      @media (max-width: 992px){ #humanTasks .video-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (max-width: 576px){ #humanTasks .video-grid{ grid-template-columns: 1fr; } }
+      #humanTasks .ht-card{ background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; box-shadow:0 6px 20px rgba(0,0,0,.06); display:flex; flex-direction:column; }
+      #humanTasks .video-title{ margin:0 0 8px 0; font-size:1rem; line-height:1.25; }
+      #humanTasks .video-wrap{ width:100%; aspect-ratio:16/9; border-radius:10px; overflow:hidden; background:#000; }
+      #humanTasks .video-wrap video{ width:100%; height:100%; object-fit:cover; display:block; }
+      #humanTasks .ht-card.flash{ box-shadow: 0 0 0 3px #7c3aed inset, 0 8px 24px rgba(124,58,237,.25); transition: box-shadow .25s ease; }
+    </style>
+
+    <div class="ht-toolbar">
+      <select id="ht-filter" class="ht-select" aria-label="Jump to a task">
+        <option value="" selected disabled>— Jump to a task —</option>
+        <option value="unplug_charger">Unplug Charger</option>
+        <option value="bread_bucket">Bread-Bucket</option>
+        <option value="press_stapler">Press Stapler</option>
+        <option value="orange_bucket">Orange-Bucket</option>
+        <option value="wipe_towel">Wipe Towel</option>
+        <option value="close_laptop">Close Laptop</option>
+        <option value="mango_bypass">Mango-Bowl (Bypass)</option>
+        <option value="mango_lift">Mango-Bowl (Lift)</option>
+        <option value="press_dice">Press Dice</option>
+        <option value="banana_plate">Banana-Plate</option>
+        <option value="pour_bottle">Pour Bottle</option>
+        <option value="toy_bear_box">Toy Bear-Box</option>
+        <option value="open_box_panda_box">Open Box + Panda-Box</option>
+        <option value="fold_towel">Fold Towel</option>
+        <option value="pour_milk_bottle">Pour Milk Bottle</option>
+      </select>
+      <button type="button" id="ht-go" class="ht-go" disabled>Go</button>
+    </div>
+
+    <div id="humanVideoPager" class="video-pager" aria-label="Human tasks video pager">
+      <div class="vp-controls">
+        <button class="vp-btn vp-prev" aria-label="Previous page">‹</button>
+        <div class="vp-dots" role="tablist" aria-label="Pages"></div>
+        <button class="vp-btn vp-next" aria-label="Next page">›</button>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const perPage = 3;
+        const tasks = [
+          { slug:'unplug_charger',      title:'Unplug Charger: Unplug the white charger',                                       src:'resources/human_data/unplug_the_white_charger_0.mp4' },
+          { slug:'bread_bucket',        title:'Bread-Bucket: Drop bread to the green bucket',                                    src:'resources/human_data/drop_bread_to_the_green_bucket_0.mp4' },
+          { slug:'press_stapler',       title:'Press Stapler: Press the stapler',                                                src:'resources/human_data/press_the_stapler_0.mp4' },
+          { slug:'orange_bucket',       title:'Orange-Bucket: Put orange to the green bucket',                                   src:'resources/human_data/put_orange_to_the_green_bucket_0.mp4' },
+          { slug:'wipe_towel',          title:'Wipe Towel: Wipe blue towel on the table and push it to the bulky bottle',        src:'resources/human_data/wipe_blue_towel_on_the_table_and_push_it_to_the_bulky_bottle_0.mp4' },
+          { slug:'close_laptop',        title:'Close Laptop: Close silver laptop',                                               src:'resources/human_data/close_silver_laptop_0.mp4' },
+          { slug:'mango_bypass',        title:'Mango-Bowl (Bypass): Put mango to pink bowl while avoiding obstacle by bypassing',src:'resources/human_data/put_mango_to_pink_bowl_while_avoiding_obstacle_by_bypassing_0.mp4' },
+          { slug:'mango_lift',          title:'Mango-Bowl (Lift): Put mango to the pink bowl while avoiding obstacle by lifting',src:'resources/human_data/put_mango_to_the_pink_bowl_while_avoiding_obstacle_by_lifting.mp4' },
+          { slug:'press_dice',          title:'Press Dice: Press red dice to make it rotation',                                  src:'resources/human_data/press_red_dice_to_make_it_rotation_0.mp4' },
+          { slug:'banana_plate',        title:'Banana-Plate: Put banana to the white plate',                                     src:'resources/human_data/put_banana_to_the_white_plate_0.mp4' },
+          { slug:'pour_bottle',         title:'Pour Bottle: Pour bottle to the pink bowl',                                       src:'resources/human_data/pour_bottle_to_the_pink_bowl.mp4' },
+          { slug:'toy_bear_box',        title:'Toy Bear-Box: Put toy bear to the black box',                                     src:'resources/human_data/put_toy_bear_to_the_black_box_0.mp4' },
+          { slug:'open_box_panda_box',  title:'Open Box + Panda-Box: First open the white cap style box then put toy panda in',  src:'resources/human_data/first_open_the_white_cap_style_box_then_put_toy_panda_to_the_box_0.mp4' },
+          { slug:'fold_towel',          title:'Fold Towel: Fold the blue towel',                                                 src:'resources/human_data/fold_the_blue_towel_0.mp4' },
+          { slug:'pour_milk_bottle',    title:'Pour Milk Bottle: Pour milk bottle to the yellow pan',                            src:'resources/human_data/pour_milk_bottle_to_the_yellow_pan_0.mp4' },
+        ];
+
+        const pager = document.getElementById('humanVideoPager');
+        const dotsWrap = pager.querySelector('.vp-dots');
+        const prev = pager.querySelector('.vp-prev');
+        const next = pager.querySelector('.vp-next');
+
+        const pages = [];
+        for (let i = 0; i < tasks.length; i += perPage) {
+          const chunk = tasks.slice(i, i + perPage);
+          const page = document.createElement('div');
+          page.className = 'vp-page' + (i === 0 ? ' active' : '');
+          page.id = 'ht-page-' + (pages.length + 1);
+
+          const grid = document.createElement('div');
+          grid.className = 'video-grid';
+
+          chunk.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'ht-card';
+            card.setAttribute('data-slug', item.slug);
+            card.innerHTML = `
+              <h5 class="video-title" title="${item.title}">${item.title}</h5>
+              <div class="video-wrap">
+                <video autoplay muted loop playsinline controls preload="metadata" src="${item.src}"></video>
+              </div>
+            `;
+            grid.appendChild(card);
+          });
+
+          page.appendChild(grid);
+          pages.push(page);
+        }
+
+        const frag = document.createDocumentFragment(); pages.forEach(p => frag.appendChild(p)); pager.appendChild(frag);
+
+        const dotsFrag = document.createDocumentFragment();
+        for (let i = 0; i < pages.length; i++) {
+          const dot = document.createElement('span');
+          dot.className = 'vp-dot' + (i === 0 ? ' active' : '');
+          dot.setAttribute('role', 'tab'); dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+          dot.setAttribute('aria-controls', pages[i].id);
+          dot.addEventListener('click', () => show(i));
+          dotsFrag.appendChild(dot);
+        }
+        dotsWrap.appendChild(dotsFrag);
+        const dots = Array.from(dotsWrap.querySelectorAll('.vp-dot'));
+
+        let idx = 0;
+        function pauseHiddenPages(except) { pages.forEach((pg, k) => { if (k !== except) { pg.querySelectorAll('video').forEach(v => { try{ v.pause(); v.currentTime = 0; } catch(e){} }); } }); }
+        function playVisiblePage(i) { pages[i].querySelectorAll('video').forEach(v => { try{ v.currentTime = 0; v.play(); } catch(e){} }); }
+        function show(i) {
+          pages[idx].classList.remove('active'); dots[idx].classList.remove('active'); dots[idx].setAttribute('aria-selected', 'false');
+          idx = (i + pages.length) % pages.length;
+          pages[idx].classList.add('active'); dots[idx].classList.add('active'); dots[idx].setAttribute('aria-selected', 'true');
+          pauseHiddenPages(idx); playVisiblePage(idx);
+        }
+        prev.addEventListener('click', () => show(idx - 1));
+        next.addEventListener('click', () => show(idx + 1));
+        pager.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') show(idx - 1); if (e.key === 'ArrowRight') show(idx + 1); });
+        pauseHiddenPages(0); playVisiblePage(0);
+
+        const select = document.getElementById('ht-filter');
+        const goBtn = document.getElementById('ht-go');
+
+        function jumpBySlug(slug){
+          const index = tasks.findIndex(t => t.slug === slug);
+          if (index < 0) return;
+          const targetPage = Math.floor(index / perPage);
+          show(targetPage);
+          const pageEl = pages[targetPage];
+          const card = pageEl.querySelector(`[data-slug="${slug}"]`);
+          if (card) { card.classList.add('flash'); card.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' }); setTimeout(() => card.classList.remove('flash'), 1200); }
+        }
+
+        select.addEventListener('change', () => { goBtn.disabled = !select.value; if (select.value) jumpBySlug(select.value); });
+        goBtn.addEventListener('click', () => { if (select.value) jumpBySlug(select.value); });
+        goBtn.disabled = !select.value;
+      })();
+    </script>
+  </div>
+
+  <!-- ================== Robot Tasks ================== -->
+  <h3 class="title is-3" style="text-align:center; margin: 8px 0 12px;">Robot Tasks</h3>
+
+  <div id="robotTasks" class="mt-card">
+    <style>
+      #robotTasks .ht-toolbar{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:center; margin:12px auto 18px; max-width:980px; }
+      #robotTasks .ht-select{ padding:10px 14px; border:1px solid #e5e7eb; border-radius:999px; background:#fff; font-size:14px; min-width:280px; outline:none; box-shadow:0 2px 8px rgba(0,0,0,.04); }
+      #robotTasks .ht-go{ padding:10px 16px; border:1px solid #e5e7eb; border-radius:999px; background:#111; color:#fff; font-size:14px; line-height:1; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.06); transition: transform .15s ease, opacity .15s ease; }
+      #robotTasks .ht-go:hover{ transform: translateY(-1px); }
+      #robotTasks .ht-go:disabled{ opacity:.5; cursor:not-allowed; }
+      #robotTasks .vp-controls{ display:flex; align-items:center; justify-content:center; gap:16px; margin: 6px 0 16px; }
+      #robotTasks .vp-btn{ border:none; width:40px; height:40px; border-radius:999px; background:#222; color:#fff; line-height:40px; text-align:center; font-size:20px; cursor:pointer; }
+      #robotTasks .vp-btn:focus{ outline:2px solid #888; }
+      #robotTasks .vp-dots{ display:flex; gap:10px; align-items:center; }
+      #robotTasks .vp-dot{ width:10px; height:10px; border-radius:50%; background:#cfcfcf; cursor:pointer; }
+      #robotTasks .vp-dot.active{ background:#333; }
+      #robotTasks .video-pager .vp-page{ display:none; }
+      #robotTasks .video-pager .vp-page.active{ display:block; }
+      #robotTasks .video-grid{ display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:24px; }
+      @media (max-width: 992px){ #robotTasks .video-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (max-width: 576px){ #robotTasks .video-grid{ grid-template-columns: 1fr; } }
+      #robotTasks .ht-card{ background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; box-shadow:0 6px 20px rgba(0,0,0,.06); display:flex; flex-direction:column; }
+      #robotTasks .video-title{ margin:0 0 8px 0; font-size:1rem; line-height:1.25; }
+      #robotTasks .video-wrap{ width:100%; aspect-ratio:16/9; border-radius:10px; overflow:hidden; background:#000; }
+      #robotTasks .video-wrap video{ width:100%; height:100%; object-fit:cover; display:block; }
+      #robotTasks .ht-card.flash{ box-shadow: 0 0 0 3px #7c3aed inset, 0 8px 24px rgba(124,58,237,.25); transition: box-shadow .25s ease; }
+    </style>
+
+    <div class="ht-toolbar">
+      <select id="rt-filter" class="ht-select" aria-label="Jump to a robot task">
+        <option value="" selected disabled>— Jump to a task —</option>
+      </select>
+      <button type="button" id="rt-go" class="ht-go" disabled>Go</button>
+    </div>
+
+    <div id="robotVideoPager" class="video-pager" aria-label="Robot tasks video pager">
+      <div class="vp-controls">
+        <button class="vp-btn vp-prev" aria-label="Previous page">‹</button>
+        <div class="vp-dots" role="tablist" aria-label="Pages"></div>
+        <button class="vp-btn vp-next" aria-label="Next page">›</button>
+      </div>
+    </div>
+
+    <script>
+      (function(){
+        const perPage = 3;
+        const tasks = [
+          { slug:'drop_black_bottle_to_purple_bucket', title:'Drop Black Bottle to Purple Bucket', src:'resources/robot_data/drop_black_bottle_to_purple_bucket_0.mp4' },
+          { slug:'flip_down_the_black_bottle', title:'Flip Down the Black Bottle', src:'resources/robot_data/flip_down_the_black_bottle_0.mp4' },
+          { slug:'move_red_dice_to_the_bulky_bottle', title:'Move Red Dice to the Bulky Bottle', src:'resources/robot_data/move_red_dice_to_the_bulky_bottle_0.mp4' },
+          { slug:'open_the_white_cap_style_box', title:'Open the White Cap Style Box', src:'resources/robot_data/open_the_white_cap_style_box_0.mp4' },
+          { slug:'pour_coak_to_the_red_cup', title:'Pour Coak to the Red Cup', src:'resources/robot_data/pour_coak_to_the_red_cup_0.mp4' },
+          { slug:'press_the_pink_mouse', title:'Press the Pink Mouse', src:'resources/robot_data/press_the_pink_mouse_0.mp4' },
+          { slug:'push_orange_cube_to_the_bulky_bottle', title:'Push Orange Cube to the Bulky Bottle', src:'resources/robot_data/push_orange_cube_to_the_bulky_bottle_0.mp4' },
+          { slug:'put_bread_to_the_high_black_platform', title:'Put Bread to the High Black Platform', src:'resources/robot_data/put_bread_to_the_high_black_platform_0.mp4' },
+          { slug:'put_bread_to_the_red_pad', title:'Put Bread to the Red Pad', src:'resources/robot_data/put_bread_to_the_red_pad_0.mp4' },
+          { slug:'put_capybara_to_the_purple_pad', title:'Put Capybara to the Purple Pad', src:'resources/robot_data/put_Capybara_to_the_purple_pad_0.mp4' },
+          { slug:'put_chilli_to_the_white_plate', title:'Put Chilli to the White Plate', src:'resources/robot_data/put_chilli_to_the_white_plate_0.mp4' },
+          { slug:'put_cucumber_to_purple_bucket', title:'Put Cucumber to Purple Bucket', src:'resources/robot_data/put_cucumber_to_purple_bucket_0.mp4' },
+          { slug:'put_mango_to_the_pink_bowl', title:'Put Mango to the Pink Bowl', src:'resources/robot_data/put_mango_to_the_pink_bowl_0.mp4' },
+          { slug:'put_toy_panda_to_the_box', title:'Put Toy Panda to the Box', src:'resources/robot_data/put_toy_panda_to_the_box_0.mp4' },
+          { slug:'wipe_blue_towel_and_push_to_pink_bowl', title:'Wipe Blue Towel and Push to Pink Bowl', src:'resources/robot_data/wipe_blue_towel_on_the_table_and_push_it_left_or_right_to_the_pink_bowl_0.mp4' },
+        ];
+
+        const sel = document.getElementById('rt-filter');
+        const go  = document.getElementById('rt-go');
+        tasks.forEach(t => { const o = document.createElement('option'); o.value = t.slug; o.textContent = t.title; sel.appendChild(o); });
+
+        const pager = document.getElementById('robotVideoPager');
+        const dotsWrap = pager.querySelector('.vp-dots');
+        const prev = pager.querySelector('.vp-prev');
+        const next = pager.querySelector('.vp-next');
+
+        const pages = [];
+        for (let i = 0; i < tasks.length; i += perPage) {
+          const chunk = tasks.slice(i, i + perPage);
+          const page = document.createElement('div');
+          page.className = 'vp-page' + (i === 0 ? ' active' : '');
+          page.id = 'rt-page-' + (pages.length + 1);
+
+          const grid = document.createElement('div');
+          grid.className = 'video-grid';
+
+          chunk.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'ht-card';
+            card.setAttribute('data-slug', item.slug);
+            card.innerHTML = `
+              <h5 class="video-title" title="${item.title}">${item.title}</h5>
+              <div class="video-wrap">
+                <video autoplay muted loop playsinline controls preload="metadata" src="${item.src}"></video>
+              </div>
+            `;
+            grid.appendChild(card);
+          });
+
+          page.appendChild(grid);
+          pages.push(page);
+        }
+        const frag = document.createDocumentFragment(); pages.forEach(p => frag.appendChild(p)); pager.appendChild(frag);
+
+        const dotsFrag = document.createDocumentFragment();
+        for (let i = 0; i < pages.length; i++) {
+          const dot = document.createElement('span');
+          dot.className = 'vp-dot' + (i === 0 ? ' active' : '');
+          dot.setAttribute('role', 'tab'); dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+          dot.setAttribute('aria-controls', pages[i].id);
+          dot.addEventListener('click', () => show(i));
+          dotsFrag.appendChild(dot);
+        }
+        dotsWrap.appendChild(dotsFrag);
+        const dots = Array.from(dotsWrap.querySelectorAll('.vp-dot'));
+
+        let idx = 0;
+        function pauseHiddenPages(except){ pages.forEach((pg,k)=>{ if(k!==except){ pg.querySelectorAll('video').forEach(v=>{ try{ v.pause(); v.currentTime=0; }catch(e){} }); } }); }
+        function playVisiblePage(i){ pages[i].querySelectorAll('video').forEach(v=>{ try{ v.currentTime=0; v.play(); }catch(e){} }); }
+        function show(i){
+          pages[idx].classList.remove('active'); dots[idx].classList.remove('active'); dots[idx].setAttribute('aria-selected','false');
+          idx = (i + pages.length) % pages.length;
+          pages[idx].classList.add('active'); dots[idx].classList.add('active'); dots[idx].setAttribute('aria-selected','true');
+          pauseHiddenPages(idx); playVisiblePage(idx);
+        }
+        prev.addEventListener('click', ()=>show(idx-1));
+        next.addEventListener('click', ()=>show(idx+1));
+        pager.addEventListener('keydown', (e)=>{ if(e.key==='ArrowLeft') show(idx-1); if(e.key==='ArrowRight') show(idx+1); });
+        pauseHiddenPages(0); playVisiblePage(0);
+
+        function jump(slug){
+          const index = tasks.findIndex(t=>t.slug===slug);
+          if(index<0) return;
+          const targetPage = Math.floor(index / perPage);
+          show(targetPage);
+          const card = pages[targetPage].querySelector(`[data-slug="${slug}"]`);
+          if(card){ card.classList.add('flash'); card.scrollIntoView({behavior:'smooth', block:'nearest'}); setTimeout(()=>card.classList.remove('flash'), 1200); }
+        }
+        sel.addEventListener('change', ()=>{ go.disabled = !sel.value; if(sel.value) jump(sel.value); });
+        go.addEventListener('click', ()=>{ if(sel.value) jump(sel.value); });
+        go.disabled = !sel.value;
+      })();
+    </script>
+  </div>
+
+  <!-- ================== Acknowledgments ================== -->
+  <section class="section mt-section" id="acknowledgments">
+    <div class="container">
+      <h2 class="title is-2 mt-title">Acknowledgments</h2>
+      <div class="mt-card">
+        <div class="content has-text-justified" style="margin:0;">
+          <p>
+            We would like to express our sincere gratitude to
+            <strong>Shuo Wang</strong>, <strong>Gu Zhang</strong>, <strong>Enshen Zhou</strong>, <strong>Haoxu Huang</strong>,
+            <strong>Jialei Huang</strong>, <strong>Ruiqian Nai</strong>, <strong>Zhengrong Xue</strong>, <strong>Junmin Zhao</strong>,
+            and <strong>Weirui Ye</strong> for their valuable discussions. We are especially grateful to
+            <strong>Ruiqian Nai</strong> and <strong>Fanqi Lin</strong> for their assistance with the implementation of Pi0-VLA,
+            and to <strong>Yankai Fu</strong> for his support with the hardware implementation.
+            Our thanks also extend to the SpiritAI and InspireRobot team for their assistance.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== BibTeX ================== -->
+  <section class="section mt-section" id="BibTeX">
+    <div class="container">
+      <h2 class="title is-2 mt-title">BibTeX</h2>
+      <div class="mt-card">
+<pre><code>
+@article{yuan2025motiontrans,
+  title={MotionTrans: Human VR Data Enable Motion-Level Learning for Robotic Manipulation Policies},
+  author={Yuan, Chengbo and Zhou, Rui and Liu, Mengzhen and Hu, Yingdong and Wang, Shengjie and Yi, Li and Wen, Chuan and Zhang, Shanghang and Gao, Yang},
+  journal={arXiv preprint arXiv:2509.17759},
+  year={2025}
+}
+</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== JS：汉堡菜单、媒体淡入 + 封面视频懒加载 ===== -->
+  <script>
+    (function(){
+      const burger = document.querySelector('.navbar-burger');
+      const menu   = document.querySelector('.navbar-menu');
+      if(burger && menu){
+        burger.addEventListener('click', ()=>{ burger.classList.toggle('is-active'); menu.classList.toggle('is-active'); });
+      }
+
+      const bg = document.getElementById('bg-video');
+      if (bg) {
+        bg.querySelectorAll('source').forEach(s => {
+          if (s.dataset.src) s.src = s.dataset.src;
+        });
+        requestAnimationFrame(() => bg.load());
+        const markReady = () => bg.classList.add('is-ready');
+        bg.addEventListener('canplay', markReady, { once:true });
+        bg.addEventListener('loadeddata', markReady, { once:true });
+      }
+
+      document.querySelectorAll('img').forEach(img=>{
+        const mark=()=>img.classList.add('is-ready');
+        if(img.complete) mark(); else img.addEventListener('load', mark, {once:true});
+      });
+      document.querySelectorAll('video').forEach(v=>{
+        const mark=()=>v.classList.add('is-ready');
+        if(v.readyState >= 2) mark(); else v.addEventListener('loadeddata', mark, {once:true});
+      });
+
+      // 让 YouTube iframe 也做淡入
+      document.querySelectorAll('iframe[data-yt]').forEach(f=>{
+        const mark = () => f.classList.add('is-ready');
+        f.addEventListener('load', mark, { once: true });
+      });
+    })();
+  </script>
+
+</body>
+</html>
