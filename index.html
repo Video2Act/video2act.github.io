@@ -350,116 +350,257 @@
     </div>
   </section>
 
-  <!-- ================== Zero-shot ================== -->
-  <section class="section mt-section" id="zero-shot">
-    <div class="container">
-      <h2 class="title is-2 mt-title">仿真效果展示</h2>
-      <p class="has-text-grey" style="text-align:center; margin-bottom:12px;">
-        机器人在仿真环境中的操作演示
-      </p>
+<!-- ================== RoboTwin Simulation ================== -->
+<section class="section mt-section" id="zero-shot">
+  <div class="container">
+    <h2 class="title is-2 mt-title">RoboTwin Simulation</h2>
+    <p class="has-text-grey" style="text-align:center; margin-bottom:12px;">
+      RoboTwin Simulation
+    </p>
 
-      <div class="mt-card" id="zeroShotBlock">
-        <style>
-          .mt-seg-title{ display:flex; align-items:center; gap:10px; margin: 6px 0 12px; font-weight:800; color:#374151; letter-spacing:.2px; }
-          .mt-seg-title::before{ content:""; width:10px; height:10px; border-radius:50%; background: linear-gradient(90deg, #7c3aed, #06b6d4); box-shadow: 0 0 0 4px rgba(124,58,237,.12); }
+    <div class="mt-card" id="zeroShotBlock">
+      <style>
+        /* 区块标题 */
+        #zero-shot .mt-seg-header{
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          gap:4px;
+          margin-bottom:20px;
+          text-align:center;
+        }
+        #zero-shot .mt-seg-title{
+          display:inline-flex;
+          align-items:center;
+          gap:10px;
+          font-weight:800;
+          color:#111827;
+          letter-spacing:.3px;
+          font-size:1.15rem;
+        }
+        #zero-shot .mt-seg-title::before{
+          content:"";
+          width:12px;
+          height:12px;
+          border-radius:50%;
+          background:linear-gradient(90deg,#7c3aed,#06b6d4);
+          box-shadow:0 0 0 6px rgba(124,58,237,.16);
+        }
+        #zero-shot .mt-seg-subtitle{
+          font-size:.9rem;
+          color:#6b7280;
+        }
 
-          #resultVideoPager{ --gap: 24px; --badge-bg: rgba(0,0,0,.55); --badge-shadow: 0 2px 8px rgba(0,0,0,.25); }
-          #resultVideoPager .rvp-grid{ display:grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: var(--gap); max-width: 1200px; margin: 0 auto; }
-          @media (max-width: 992px){ #resultVideoPager .rvp-grid{ grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); } }
-          @media (max-width: 576px){ #resultVideoPager .rvp-grid{ grid-template-columns: 1fr; grid-template-rows: repeat(6, 1fr); } }
-          #resultVideoPager .rvp-item{ display:flex; flex-direction:column; }
-          #resultVideoPager .rvp-video{ position:relative; width:100%; aspect-ratio:16/9; border-radius:10px; overflow:hidden; background:#000; }
-          #resultVideoPager .rvp-video video{ width:100%; height:100%; object-fit:cover; display:block; }
-          #resultVideoPager .rvp-badge{ position:absolute; top:10px; left:10px; padding:6px 10px; border-radius:999px; background: var(--badge-bg); color:#fff; font-size:12px; letter-spacing:.2px; box-shadow: var(--badge-shadow); user-select:none; }
-          #resultVideoPager .rvp-caption{ text-align:center; margin-top:6px; font-size:.95rem; color:#6b7280; font-weight: 600; }
+        /* 视频网格整体 */
+        #resultVideoPager{
+          --gap: 24px;
+          --badge-bg: rgba(0,0,0,.60);
+          --badge-shadow: 0 4px 14px rgba(0,0,0,.35);
+          margin-top: 8px;
+        }
+        #resultVideoPager .rvp-grid{
+          display:grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: var(--gap);
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        @media (max-width: 992px){
+          #resultVideoPager .rvp-grid{
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (max-width: 576px){
+          #resultVideoPager .rvp-grid{
+            grid-template-columns: 1fr;
+          }
+        }
 
-          #zero-shot .fig-grid{ display:grid; grid-template-columns: 1fr; gap:24px; max-width:1100px; margin:0 auto; }
-          #zero-shot figure{ margin:0; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 8px 28px rgba(0,0,0,.12); }
-          #zero-shot img{ width:100%; height:auto; display:block; }
-          #zero-shot figcaption{ padding:10px 14px; font-size:.95rem; color:#6b7280; text-align:center; background:#fafafa; }
-        </style>
+        /* 单个视频卡片 */
+        #resultVideoPager .rvp-item{
+          display:flex;
+          flex-direction:column;
+          background:#ffffff;
+          border-radius:16px;
+          padding:12px 12px 14px;
+          box-shadow:0 12px 30px rgba(15,23,42,.12);
+          transition:transform .18s ease-out, box-shadow .18s ease-out;
+        }
+        #resultVideoPager .rvp-item:hover{
+          transform:translateY(-4px);
+          box-shadow:0 18px 40px rgba(15,23,42,.16);
+        }
 
-        <!-- Zero-shot 搜索栏 -->
-        <div class="mt-seg-title">RoboTwin Simulation</div>
-        <div id="resultVideoPager" class="video-pager" aria-label="RoboTwin Simulation">
-        </div>
+        /* 视频容器 */
+        #resultVideoPager .rvp-video{
+          position:relative;
+          width:100%;
+          aspect-ratio:16/9;
+          border-radius:12px;
+          overflow:hidden;
+          background:#000;
+        }
+        #resultVideoPager .rvp-video::after{
+          content:"";
+          position:absolute;
+          inset:0;
+          background:linear-gradient(to top, rgba(0,0,0,.45), transparent 40%);
+          pointer-events:none;
+        }
 
-        <script>
-          (function () {
-            const pager = document.getElementById('resultVideoPager');
-            if (!pager) return;
+        /* 视频标签本身 */
+        #resultVideoPager .rvp-video video{
+          width:100%;
+          height:100%;
+          object-fit:cover;
+          display:block;
+          opacity:0;
+          transition:opacity .25s ease-out;
+        }
+        #resultVideoPager .rvp-video video.is-ready{
+          opacity:1;
+        }
 
-            // 仿真视频数据
-            const simVideos = [
-              {
-                title: "Block Handover",
-                src: "resources/robotwin_rollout/block_handover_D435/episode0/video.mp4",
-                description: "Block Handover"
-              },
-              {
-                title: "Container Place",
-                src: "resources/robotwin_rollout/container_place_D435/episode0/video.mp4",
-                description: "Container Place"
-              },
-              {
-                title: "Dual Bottles Pick (Easy)",
-                src: "resources/robotwin_rollout/dual_bottles_pick_easy_D435/episode0/video.mp4",
-                description: "Dual Bottles Pick (Easy)"
-              },
-              {
-                title: "Dual Bottles Pick (Hard)",
-                src: "resources/robotwin_rollout/dual_bottles_pick_hard_D435/episode0/video.mp4",
-                description: "Dual Bottles Pick (Hard)"
-              },
-              {
-                title: "Empty Cup Place",
-                src: "resources/robotwin_rollout/empty_cup_place_D435/episode0/video.mp4",
-                description: "Empty Cup Place"
-              },
-              {
-                title: "Pick Apple Messy",
-                src: "resources/robotwin_rollout/pick_apple_messy_D435/episode0/video.mp4",
-                description: "Pick Apple Messy"
-              }
-            ];
+        /* 左上角徽标 */
+        #resultVideoPager .rvp-badge{
+          position:absolute;
+          top:10px;
+          left:10px;
+          padding:6px 11px;
+          border-radius:999px;
+          background: var(--badge-bg);
+          color:#f9fafb;
+          font-size:11px;
+          letter-spacing:.12em;
+          text-transform:uppercase;
+          box-shadow: var(--badge-shadow);
+          user-select:none;
+          z-index:2;
+        }
 
-            // 创建网格容器
-            const grid = document.createElement('div');
-            grid.className = 'rvp-grid';
+        /* 右下角小播放图标 */
+        #resultVideoPager .rvp-play-icon{
+          position:absolute;
+          right:10px;
+          bottom:10px;
+          width:26px;
+          height:26px;
+          border-radius:999px;
+          border:1px solid rgba(249,250,251,.4);
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          background:rgba(15,23,42,.65);
+          backdrop-filter:blur(4px);
+          z-index:2;
+        }
+        #resultVideoPager .rvp-play-icon::before{
+          content:"";
+          border-style:solid;
+          border-width:5px 0 5px 9px;
+          border-color:transparent transparent transparent #f9fafb;
+          margin-left:2px;
+        }
 
-            // 生成每个视频项
-            simVideos.forEach(video => {
-              const item = document.createElement('div');
-              item.className = 'rvp-item';
-              item.innerHTML = `
-                <div class="rvp-video">
-                  <span class="rvp-badge">Robotwin</span>
-                  <video autoplay muted loop playsinline controls preload="metadata" src="${video.src}">
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-                <div class="rvp-caption">${video.title}</div>
-              `;
-              grid.appendChild(item);
-            });
+        /* 标题/说明 */
+        #resultVideoPager .rvp-caption{
+          text-align:center;
+          margin-top:10px;
+          font-size:.95rem;
+          color:#374151;
+          font-weight:600;
+        }
+      </style>
 
-            // 将网格添加到容器
-            pager.appendChild(grid);
-
-            // 为所有视频添加淡入效果
-            grid.querySelectorAll('video').forEach(video => {
-              const markReady = () => video.classList.add('is-ready');
-              if (video.readyState >= 2) {
-                markReady();
-              } else {
-                video.addEventListener('loadeddata', markReady, { once: true });
-              }
-            });
-          })();
-        </script>
+      <!-- 标题区（已去掉搜索栏） -->
+      <div class="mt-seg-header">
+        <div class="mt-seg-title">Simulation Gallery</div>
+        <p class="mt-seg-subtitle">
+          A collection of RoboTwin simulation rollouts under different tasks.
+        </p>
       </div>
+
+      <!-- 视频网格 -->
+      <div id="resultVideoPager" class="video-pager" aria-label="RoboTwin Simulation"></div>
+
+      <script>
+        (function () {
+          const pager = document.getElementById('resultVideoPager');
+          if (!pager) return;
+
+          // 仿真视频数据
+          const simVideos = [
+            {
+              title: "Block Handover",
+              src: "resources/robotwin_rollout/block_handover_D435/episode0/video.mp4",
+              description: "Block Handover"
+            },
+            {
+              title: "Container Place",
+              src: "resources/robotwin_rollout/container_place_D435/episode0/video.mp4",
+              description: "Container Place"
+            },
+            {
+              title: "Dual Bottles Pick (Easy)",
+              src: "resources/robotwin_rollout/dual_bottles_pick_easy_D435/episode0/video.mp4",
+              description: "Dual Bottles Pick (Easy)"
+            },
+            {
+              title: "Dual Bottles Pick (Hard)",
+              src: "resources/robotwin_rollout/dual_bottles_pick_hard_D435/episode0/video.mp4",
+              description: "Dual Bottles Pick (Hard)"
+            },
+            {
+              title: "Empty Cup Place",
+              src: "resources/robotwin_rollout/empty_cup_place_D435/episode0/video.mp4",
+              description: "Empty Cup Place"
+            },
+            {
+              title: "Pick Apple Messy",
+              src: "resources/robotwin_rollout/pick_apple_messy_D435/episode0/video.mp4",
+              description: "Pick Apple Messy"
+            }
+          ];
+
+          // 创建网格容器
+          const grid = document.createElement('div');
+          grid.className = 'rvp-grid';
+
+          // 生成每个视频项
+          simVideos.forEach(video => {
+            const item = document.createElement('div');
+            item.className = 'rvp-item';
+            item.innerHTML = `
+              <div class="rvp-video">
+                <span class="rvp-badge">Robotwin</span>
+                <div class="rvp-play-icon"></div>
+                <video muted loop playsinline controls preload="metadata" src="${video.src}">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <div class="rvp-caption">${video.title}</div>
+            `;
+            grid.appendChild(item);
+          });
+
+          // 将网格添加到容器
+          pager.appendChild(grid);
+
+          // 为所有视频添加淡入效果
+          grid.querySelectorAll('video').forEach(video => {
+            const markReady = () => video.classList.add('is-ready');
+            if (video.readyState >= 2) {
+              markReady();
+            } else {
+              video.addEventListener('loadeddata', markReady, { once: true });
+            }
+          });
+        })();
+      </script>
     </div>
-  </section>
+  </div>
+</section>
+
 
   <!-- ================== Few-shot ================== -->
   <section class="section mt-section" id="fewshot">
