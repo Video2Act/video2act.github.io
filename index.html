@@ -526,21 +526,21 @@
           font-weight:600;
         }
 
-        /* 仿真定量结果卡片样式 */
-        #zero-shot .mt-quant-card figure{
-          margin:0;
+        /* 仿真定量结果在同一卡片内的样式 */
+        #zero-shot .mt-quant-fig{
+          margin:22px 0 0;
           padding:16px;
           background:#ffffff;
           border-radius:16px;
           box-shadow:0 10px 28px rgba(15,23,42,.12);
         }
-        #zero-shot .mt-quant-card img{
+        #zero-shot .mt-quant-fig img{
           display:block;
           width:100%;
           height:auto;
           border-radius:10px;
         }
-        #zero-shot .mt-quant-card figcaption{
+        #zero-shot .mt-quant-fig figcaption{
           margin-top:8px;
           text-align:center;
           font-size:.9rem;
@@ -548,7 +548,7 @@
         }
       </style>
 
-      <!-- 标题区（已去掉搜索栏） -->
+      <!-- 标题区 -->
       <div class="mt-seg-header">
         <div class="mt-seg-title">Simulation Gallery</div>
         <p class="mt-seg-subtitle">
@@ -564,45 +564,18 @@
           const pager = document.getElementById('resultVideoPager');
           if (!pager) return;
 
-          // 仿真视频数据
           const simVideos = [
-            {
-              title: "Block Handover",
-              src: "resources/robotwin_rollout/block_handover_D435/episode0/video.mp4",
-              description: "Block Handover"
-            },
-            {
-              title: "Container Place",
-              src: "resources/robotwin_rollout/container_place_D435/episode0/video.mp4",
-              description: "Container Place"
-            },
-            {
-              title: "Dual Bottles Pick (Easy)",
-              src: "resources/robotwin_rollout/dual_bottles_pick_easy_D435/episode0/video.mp4",
-              description: "Dual Bottles Pick (Easy)"
-            },
-            {
-              title: "Dual Bottles Pick (Hard)",
-              src: "resources/robotwin_rollout/dual_bottles_pick_hard_D435/episode0/video.mp4",
-              description: "Dual Bottles Pick (Hard)"
-            },
-            {
-              title: "Empty Cup Place",
-              src: "resources/robotwin_rollout/empty_cup_place_D435/episode0/video.mp4",
-              description: "Empty Cup Place"
-            },
-            {
-              title: "Pick Apple Messy",
-              src: "resources/robotwin_rollout/pick_apple_messy_D435/episode0/video.mp4",
-              description: "Pick Apple Messy"
-            }
+            { title: "Block Handover", src: "resources/robotwin_rollout/block_handover_D435/episode0/video.mp4" },
+            { title: "Container Place", src: "resources/robotwin_rollout/container_place_D435/episode0/video.mp4" },
+            { title: "Dual Bottles Pick (Easy)", src: "resources/robotwin_rollout/dual_bottles_pick_easy_D435/episode0/video.mp4" },
+            { title: "Dual Bottles Pick (Hard)", src: "resources/robotwin_rollout/dual_bottles_pick_hard_D435/episode0/video.mp4" },
+            { title: "Empty Cup Place", src: "resources/robotwin_rollout/empty_cup_place_D435/episode0/video.mp4" },
+            { title: "Pick Apple Messy", src: "resources/robotwin_rollout/pick_apple_messy_D435/episode0/video.mp4" }
           ];
 
-          // 创建网格容器
           const grid = document.createElement('div');
           grid.className = 'rvp-grid';
 
-          // 生成每个视频项
           simVideos.forEach(video => {
             const item = document.createElement('div');
             item.className = 'rvp-item';
@@ -619,10 +592,8 @@
             grid.appendChild(item);
           });
 
-          // 将网格添加到容器
           pager.appendChild(grid);
 
-          // 为所有视频添加淡入效果
           grid.querySelectorAll('video').forEach(video => {
             const markReady = () => video.classList.add('is-ready');
             if (video.readyState >= 2) {
@@ -633,12 +604,9 @@
           });
         })();
       </script>
-    </div>
 
-    <!-- RoboTwin Simulation Quantitative Results -->
-    <div class="mt-card mt-quant-card">
-      <figure>
-        <!-- TODO: 替换为 RoboTwin 仿真定量结果图路径 -->
+      <!-- 仿真定量结果图（与视频同一卡片） -->
+      <figure class="mt-quant-fig">
         <img src="resources/RoboTwinSR.png" alt="RoboTwin simulation quantitative results">
         <figcaption>RoboTwin simulation: quantitative success rates across tasks.</figcaption>
       </figure>
@@ -808,21 +776,21 @@
           font-weight:600;
         }
 
-        /* 真机定量结果卡片样式 */
-        #real-robot .mt-quant-card figure{
-          margin:0;
+        /* 真机定量结果在同一卡片内的样式 */
+        #real-robot .mt-quant-fig{
+          margin:22px 0 0;
           padding:16px;
           background:#ffffff;
           border-radius:16px;
           box-shadow:0 10px 28px rgba(15,23,42,.12);
         }
-        #real-robot .mt-quant-card img{
+        #real-robot .mt-quant-fig img{
           display:block;
           width:100%;
           height:auto;
           border-radius:10px;
         }
-        #real-robot .mt-quant-card figcaption{
+        #real-robot .mt-quant-fig figcaption{
           margin-top:8px;
           text-align:center;
           font-size:.9rem;
@@ -846,39 +814,18 @@
           const pager = document.getElementById('realRobotPager');
           if (!pager) return;
 
-          // 真机实验视频数据
           const realVideos = [
-            {
-              title: "block handover",
-              src: "resources/success_demo/close_laptop.mp4"
-            },
-            {
-              title: "container place",
-              src: "resources/success_demo/handover_cucumber.mp4"
-            },
-            {
-              title: "dual bottles pick easy",
-              src: "resources/success_demo/pick_carrot.mp4"
-            },
-            {
-              title: "dual bottles pick hard",
-              src: "resources/success_demo/pick_dual_carrot.mp4"
-            },
-            {
-              title: "empty cup place",
-              src: "resources/success_demo/pick_flowers.mp4"
-            },
-            {
-              title: "pick apple messy",
-              src: "resources/success_demo/push_triangle.mp4"
-            }
+            { title: "block handover", src: "resources/success_demo/close_laptop.mp4" },
+            { title: "container place", src: "resources/success_demo/handover_cucumber.mp4" },
+            { title: "dual bottles pick easy", src: "resources/success_demo/pick_carrot.mp4" },
+            { title: "dual bottles pick hard", src: "resources/success_demo/pick_dual_carrot.mp4" },
+            { title: "empty cup place", src: "resources/success_demo/pick_flowers.mp4" },
+            { title: "pick apple messy", src: "resources/success_demo/push_triangle.mp4" }
           ];
 
-          // 创建网格容器
           const grid = document.createElement('div');
           grid.className = 'rvp-grid';
 
-          // 生成每个视频项
           realVideos.forEach(video => {
             const item = document.createElement('div');
             item.className = 'rvp-item';
@@ -895,10 +842,8 @@
             grid.appendChild(item);
           });
 
-          // 将网格添加到容器
           pager.appendChild(grid);
 
-          // 为所有视频添加淡入效果
           grid.querySelectorAll('video').forEach(video => {
             const markReady = () => video.classList.add('is-ready');
             if (video.readyState >= 2) {
@@ -909,12 +854,9 @@
           });
         })();
       </script>
-    </div>
 
-    <!-- Real Robot Quantitative Results -->
-    <div class="mt-card mt-quant-card">
-      <figure>
-        <!-- TODO: 替换为真机定量结果图路径 -->
+      <!-- 真机定量结果图（与视频同一卡片） -->
+      <figure class="mt-quant-fig">
         <img src="resources/RealSuccessRate.png" alt="Real robot quantitative results">
         <figcaption>Real robot experiments: success rates over different tasks.</figcaption>
       </figure>
@@ -924,11 +866,11 @@
 
 
 
-  <!-- ================== Generalization Experiments ================== -->
+<!-- ================== Generalization Experiments ================== -->
 <section class="section mt-section" id="generalization">
   <div class="container">
     <h2 class="title is-2 mt-title">Generalization Experiments</h2>
-    <p class="has-text-grey" style="text-align:center; margin-bottom:12px;">
+  <p class="has-text-grey" style="text-align:center; margin-bottom:12px;">
       Visual and quantitative results of our generalization experiments.
     </p>
 
@@ -1067,22 +1009,21 @@
           font-weight:500;
         }
 
-        /* 柱状图定量结果样式 */
-        #generalization .mt-quant-card figure{
-          margin:0;
-          margin-top:22px;
+        /* 柱状图定量结果在同一卡片内样式 */
+        #generalization .mt-quant-fig{
+          margin:22px 0 0;
           padding:16px;
           background:#ffffff;
           border-radius:16px;
           box-shadow:0 10px 28px rgba(15,23,42,.12);
         }
-        #generalization .mt-quant-card img{
+        #generalization .mt-quant-fig img{
           display:block;
           width:100%;
           height:auto;
           border-radius:10px;
         }
-        #generalization .mt-quant-card figcaption{
+        #generalization .mt-quant-fig figcaption{
           margin-top:8px;
           text-align:center;
           font-size:.9rem;
@@ -1186,12 +1127,9 @@
         </div>
 
       </div> <!-- /generalizationGrid -->
-    </div>
 
-    <!-- Generalization quantitative results (bar chart) -->
-    <div class="mt-card mt-quant-card">
-      <figure>
-        <!-- TODO: 替换为 generalization 定量实验柱状图路径 -->
+      <!-- Generalization quantitative results (bar chart, 与视频同一卡片) -->
+      <figure class="mt-quant-fig">
         <img src="resources/Generalization.png"
              alt="Generalization quantitative results">
         <figcaption>Quantitative evaluation of generalization over background, lighting and object changes.</figcaption>
