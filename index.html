@@ -602,174 +602,251 @@
 </section>
 
 
-  <!-- ================== Few-shot ================== -->
-  <section class="section mt-section" id="fewshot">
-    <div class="container">
-      <h2 class="title is-2 mt-title">MotionTrans Few-Shot Inference Results on Real Robot</h2>
-      <p class="has-text-grey" style="text-align:center; margin-bottom:12px;">
-        (Left: Human Data · Right: MotionTrans-DP, few-shot)
-      </p>
+  <!-- ================== Real Robot Experiments ================== -->
+<section class="section mt-section" id="real-robot">
+  <div class="container">
+    <h2 class="title is-2 mt-title">Real Robot Experiments</h2>
+    <p class="has-text-grey" style="text-align:center; margin-bottom:12px;">
+      Real robot execution of the RoboTwin tasks
+    </p>
 
-      <div class="mt-card" id="fewShotBlock">
-        <style>
-          .mt-seg-title{ display:flex; align-items:center; gap:10px; margin: 6px 0 12px; font-weight:800; color:#374151; letter-spacing:.2px; }
-          .mt-seg-title::before{ content:""; width:10px; height:10px; border-radius:50%; background: linear-gradient(90deg, #7c3aed, #06b6d4); box-shadow: 0 0 0 4px rgba(124,58,237,.12); }
+    <div class="mt-card" id="realRobotBlock">
+      <style>
+        /* 区块标题 */
+        #real-robot .mt-seg-header{
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          gap:4px;
+          margin-bottom:20px;
+          text-align:center;
+        }
+        #real-robot .mt-seg-title{
+          display:inline-flex;
+          align-items:center;
+          gap:10px;
+          font-weight:800;
+          color:#111827;
+          letter-spacing:.3px;
+          font-size:1.15rem;
+        }
+        #real-robot .mt-seg-title::before{
+          content:"";
+          width:12px;
+          height:12px;
+          border-radius:50%;
+          background:linear-gradient(90deg,#7c3aed,#06b6d4);
+          box-shadow:0 0 0 6px rgba(124,58,237,.16);
+        }
+        #real-robot .mt-seg-subtitle{
+          font-size:.9rem;
+          color:#6b7280;
+        }
 
-          #fewshotVideoPager{ --gap: 24px; --badge-bg: rgba(0,0,0,.55); --badge-shadow: 0 2px 8px rgba(0,0,0,.25); --frame-border: #e5e7eb; --frame-title: #374151; --frame-bg: #fff; }
-          #fewshotVideoPager .rvp-task{ text-align:center; margin:0 0 12px; font-weight:800; line-height:1.2; }
-          #fewshotVideoPager .rvp-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap); }
-          @media (max-width: 768px){ #fewshotVideoPager .rvp-grid{ grid-template-columns: 1fr; } }
-          #fewshotVideoPager .rvp-frame{ background: var(--frame-bg); border: 1px solid var(--frame-border); border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.08); padding: 14px 16px 16px; display:flex; flex-direction:column; }
-          #fewshotVideoPager .rvp-frame-title{ font-size:1.1rem; font-weight:800; color:var(--frame-title); margin:2px 0 10px; letter-spacing:.2px; text-align:left; }
-          #fewshotVideoPager .rvp-item{ display:flex; flex-direction:column; }
-          #fewshotVideoPager .rvp-video{ position:relative; width:100%; aspect-ratio:16/9; border-radius:12px; overflow:hidden; background:#000; }
-          #fewshotVideoPager .rvp-video video{ width:100%; height:100%; object-fit:cover; display:block; }
-          #fewshotVideoPager .rvp-badge{ position:absolute; top:10px; left:10px; padding:6px 10px; border-radius:999px; background:var(--badge-bg); color:#fff; font-size:12px; letter-spacing:.2px; box-shadow:var(--badge-shadow); user-select:none; }
-          #fewshotVideoPager .rvp-caption{ text-align:center; margin-top:6px; font-size:.95rem; color:#6b7280; }
-          #fewshotVideoPager .vp-controls{ margin:6px 0 16px; }
+        /* 视频网格整体 */
+        #realRobotPager{
+          --gap: 24px;
+          --badge-bg: rgba(0,0,0,.60);
+          --badge-shadow: 0 4px 14px rgba(0,0,0,.35);
+          margin-top: 8px;
+        }
+        #realRobotPager .rvp-grid{
+          display:grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: var(--gap);
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        @media (max-width: 992px){
+          #realRobotPager .rvp-grid{
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (max-width: 576px){
+          #realRobotPager .rvp-grid{
+            grid-template-columns: 1fr;
+          }
+        }
 
-          #fewshot .fig-grid{ display:grid; grid-template-columns: 1fr; gap:24px; max-width:1100px; margin:0 auto; }
-          #fewshot figure{ margin:0; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 8px 28px rgba(0,0,0,.12); }
-          #fewshot img{ width:100%; height:auto; display:block; }
-          #fewshot figcaption{ padding:10px 14px; font-size:.95rem; color:#6b7280; text-align:center; background:#fafafa; }
+        /* 单个视频卡片 */
+        #realRobotPager .rvp-item{
+          display:flex;
+          flex-direction:column;
+          background:#ffffff;
+          border-radius:16px;
+          padding:12px 12px 14px;
+          box-shadow:0 12px 30px rgba(15,23,42,.12);
+          transition:transform .18s ease-out, box-shadow .18s ease-out;
+        }
+        #realRobotPager .rvp-item:hover{
+          transform:translateY(-4px);
+          box-shadow:0 18px 40px rgba(15,23,42,.16);
+        }
 
-          #fs-tools .ht-toolbar{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:center; margin:12px auto 18px; max-width:980px; }
-          #fs-tools .ht-select{ padding:10px 14px; border:1px solid #e5e7eb; border-radius:999px; background:#fff; font-size:14px; min-width:280px; outline:none; box-shadow:0 2px 8px rgba(0,0,0,.04); }
-          #fs-tools .ht-go{ padding:10px 16px; border:1px solid #e5e7eb; border-radius:999px; background:#111; color:#fff; font-size:14px; line-height:1; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.06); transition: transform .15s ease, opacity .15s ease; }
-          #fs-tools .ht-go:hover{ transform: translateY(-1px); }
-          #fs-tools .ht-go:disabled{ opacity:.5; cursor:not-allowed; }
-          #fewshotVideoPager .flash{ box-shadow: 0 0 0 3px #7c3aed inset, 0 10px 26px rgba(124,58,237,.25); transition: box-shadow .25s ease; }
-        </style>
+        /* 视频容器 */
+        #realRobotPager .rvp-video{
+          position:relative;
+          width:100%;
+          aspect-ratio:16/9;
+          border-radius:12px;
+          overflow:hidden;
+          background:#000;
+        }
+        #realRobotPager .rvp-video::after{
+          content:"";
+          position:absolute;
+          inset:0;
+          background:linear-gradient(to top, rgba(0,0,0,.45), transparent 40%);
+          pointer-events:none;
+        }
 
-        <div id="fs-tools">
-          <div class="ht-toolbar">
-            <select id="fs-filter" class="ht-select" aria-label="Jump to a few-shot task">
-              <option value="" selected disabled>— Jump to a task —</option>
-            </select>
-            <button type="button" id="fs-go" class="ht-go" disabled>Go</button>
-          </div>
-        </div>
+        /* 视频标签本身 */
+        #realRobotPager .rvp-video video{
+          width:100%;
+          height:100%;
+          object-fit:cover;
+          display:block;
+          opacity:0;
+          transition:opacity .25s ease-out;
+        }
+        #realRobotPager .rvp-video video.is-ready{
+          opacity:1;
+        }
 
-        <div class="mt-seg-title">Videos</div>
-        <div id="fewshotVideoPager" class="video-pager" aria-label="Few-shot qualitative video pager">
-          <div class="vp-controls">
-            <button class="vp-btn vp-prev" aria-label="Previous task">‹</button>
-            <div class="vp-dots" role="tablist" aria-label="Task pages"></div>
-            <button class="vp-btn vp-next" aria-label="Next task">›</button>
-          </div>
-        </div>
+        /* 左上角徽标 */
+        #realRobotPager .rvp-badge{
+          position:absolute;
+          top:10px;
+          left:10px;
+          padding:6px 11px;
+          border-radius:999px;
+          background: var(--badge-bg);
+          color:#f9fafb;
+          font-size:11px;
+          letter-spacing:.12em;
+          text-transform:uppercase;
+          box-shadow: var(--badge-shadow);
+          user-select:none;
+          z-index:2;
+        }
 
-        <div class="mt-seg-title" style="margin-top:18px;">Quantitative Results</div>
-        <div class="fig-grid">
-          <figure>
-            <img src="./resources/experiment_results/main_fewshot_result_score.png" alt="Few-shot motion progress score across tasks and average" loading="lazy">
-            <figcaption>Few-shot Motion Progress <b>Score</b> (higher is better).</figcaption>
-          </figure>
-          <figure>
-            <img src="./resources/experiment_results/main_fewshot_result_sr.png" alt="Few-shot success rate across tasks and average" loading="lazy">
-            <figcaption>Few-shot <b>Success Rate</b> (SR, %) across tasks and average.</figcaption>
-          </figure>
-        </div>
+        /* 右下角小播放图标 */
+        #realRobotPager .rvp-play-icon{
+          position:absolute;
+          right:10px;
+          bottom:10px;
+          width:26px;
+          height:26px;
+          border-radius:999px;
+          border:1px solid rgba(249,250,251,.4);
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          background:rgba(15,23,42,.65);
+          backdrop-filter:blur(4px);
+          z-index:2;
+        }
+        #realRobotPager .rvp-play-icon::before{
+          content:"";
+          border-style:solid;
+          border-width:5px 0 5px 9px;
+          border-color:transparent transparent transparent #f9fafb;
+          margin-left:2px;
+        }
 
-        <script>
-          (function () {
-            const pager = document.getElementById('fewshotVideoPager');
-            if (!pager) return;
+        /* 标题/说明 */
+        #realRobotPager .rvp-caption{
+          text-align:center;
+          margin-top:10px;
+          font-size:.95rem;
+          color:#374151;
+          font-weight:600;
+        }
+      </style>
 
-            const tasks = [
-              { title: "Orange → Green Bucket", human: "resources/human_data/put_orange_to_the_green_bucket_0.mp4", dp0: "resources/infer_video_960x540/orange_bucket_dp20_960x540.mp4" },
-              { title: "Unplug Charger", human: "resources/human_data/unplug_the_white_charger_0.mp4", dp0: "resources/infer_video_960x540/unplug_charger_dp20_960x540.mp4" },
-              { title: "Close Laptop", human: "resources/human_data/close_silver_laptop_0.mp4", dp0: "resources/infer_video_960x540/close_laptop_dp20_960x540.mp4" },
-              { title: "Banana → White Plate", human: "resources/human_data/put_banana_to_the_white_plate_0.mp4", dp0: "resources/infer_video_960x540/banana_plate_dp20_960x540.mp4" },
-              { title: "Open Box → Put Toy Panda", human: "resources/human_data/first_open_the_white_cap_style_box_then_put_toy_panda_to_the_box_0.mp4", dp0: "resources/infer_video_960x540/box_panda_box_dp20_960x540.mp4" },
-              { title: "Press Dice", human: "resources/human_data/press_red_dice_to_make_it_rotation_0.mp4", dp0: "resources/infer_video_960x540/press_dice_dp20_960x540.mp4" },
-              { title: "Pour Bottle to Bowl", human: "resources/human_data/pour_bottle_to_the_pink_bowl.mp4", dp0: "resources/infer_video_960x540/pour_bottle_dp20_960x540.mp4" },
-              { title: "Bread-Bucket", human: "resources/human_data/drop_bread_to_the_green_bucket_0.mp4", dp0: "resources/infer_video_960x540/bread_bucket_dp20_960x540.mp4" },
-              { title: "Press Stapler", human: "resources/human_data/press_the_stapler_0.mp4", dp0: "resources/infer_video_960x540/press_stapler_dp20_960x540.mp4" },
-              { title: "Mango → Pink Bowl (Bypass)", human: "resources/human_data/put_mango_to_pink_bowl_while_avoiding_obstacle_by_bypassing_0.mp4", dp0: "resources/infer_video_960x540/mango_bypass_dp20_960x540.mp4" },
-              { title: "Mango → Pink Bowl (Lift)", human: "resources/human_data/put_mango_to_the_pink_bowl_while_avoiding_obstacle_by_lifting.mp4", dp0: "resources/infer_video_960x540/mango_bypass_dp20_960x540.mp4" },
-              { title: "Toy Bear → Black Box", human: "resources/human_data/put_toy_bear_to_the_black_box_0.mp4", dp0: "resources/infer_video_960x540/mango_lift_dp20_960x540.mp4" },
-              { title: "Wipe Towel", human: "resources/human_data/wipe_blue_towel_on_the_table_and_push_it_to_the_bulky_bottle_0.mp4", dp0: "resources/infer_video_960x540/wipe_towel_dp20_960x540.mp4" },
-            ];
-
-            const prev = pager.querySelector('.vp-prev');
-            const next = pager.querySelector('.vp-next');
-            const dotsWrap = pager.querySelector('.vp-dots');
-
-            const fsSelect = document.getElementById('fs-filter');
-            const fsGo = document.getElementById('fs-go');
-            tasks.forEach((t, i) => { const opt = document.createElement('option'); opt.value = String(i); opt.textContent = t.title; fsSelect.appendChild(opt); });
-
-            const frag = document.createDocumentFragment();
-            tasks.forEach((t, i) => {
-              const page = document.createElement('div');
-              page.className = 'vp-page' + (i === 0 ? ' active' : '');
-              page.id = 'fvp-page-' + (i + 1);
-              page.innerHTML = `
-                <h3 class="rvp-task">${t.title}</h3>
-                <div class="rvp-grid">
-                  <div class="rvp-frame">
-                    <div class="rvp-frame-title">Human Demonstration</div>
-                    <div class="rvp-item">
-                      <div class="rvp-video">
-                        <span class="rvp-badge">Human Data</span>
-                        <video autoplay muted loop playsinline controls preload="metadata" src="${t.human}"></video>
-                      </div>
-                      <div class="rvp-caption">Human demonstration</div>
-                    </div>
-                  </div>
-                  <div class="rvp-frame">
-                    <div class="rvp-frame-title">Robot Inference (few-shot)</div>
-                    <div class="rvp-item">
-                      <div class="rvp-video">
-                        <span class="rvp-badge">MotionTrans-DP</span>
-                        <video autoplay muted loop playsinline controls preload="metadata" src="${t.dp0}"></video>
-                      </div>
-                      <div class="rvp-caption">MotionTrans-DP, few-shot</div>
-                    </div>
-                  </div>
-                </div>
-              `;
-              frag.appendChild(page);
-            });
-            pager.appendChild(frag);
-
-            dotsWrap.innerHTML = '';
-            const pages = Array.from(pager.querySelectorAll('.vp-page'));
-            pages.forEach((p, k) => {
-              const dot = document.createElement('span');
-              dot.className = 'vp-dot' + (k === 0 ? ' active' : '');
-              dot.setAttribute('role', 'tab');
-              dot.setAttribute('aria-selected', k === 0 ? 'true' : 'false');
-              dot.setAttribute('aria-controls', p.id);
-              dot.addEventListener('click', () => show(k));
-              dotsWrap.appendChild(dot);
-            });
-            const dots = Array.from(dotsWrap.querySelectorAll('.vp-dot'));
-
-            let idx = 0;
-            function pauseHiddenPages(except) { pages.forEach((pg, k) => { if (k !== except) { pg.querySelectorAll('video').forEach(v => { try{ v.pause(); v.currentTime = 0; }catch(e){} }); } }); }
-            function playVisiblePage(i) { pages[i].querySelectorAll('video').forEach(v => { try{ v.currentTime = 0; v.play(); }catch(e){} }); }
-            function show(i) {
-              pages[idx].classList.remove('active'); dots[idx].classList.remove('active'); dots[idx].setAttribute('aria-selected', 'false');
-              idx = (i + pages.length) % pages.length;
-              pages[idx].classList.add('active'); dots[idx].classList.add('active'); dots[idx].setAttribute('aria-selected', 'true');
-              pauseHiddenPages(idx); playVisiblePage(idx);
-            }
-            prev.addEventListener('click', () => show(idx - 1));
-            next.addEventListener('click', () => show(idx + 1));
-            pager.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') show(idx - 1); if (e.key === 'ArrowRight') show(idx + 1); });
-            pauseHiddenPages(0); playVisiblePage(0);
-
-            function flashPage(i){ const vids = pages[i].querySelectorAll('.rvp-video'); vids.forEach(v => v.classList.add('flash')); setTimeout(() => vids.forEach(v => v.classList.remove('flash')), 1200); pages[i].scrollIntoView({behavior:'smooth', block:'nearest'}); }
-            fsSelect.addEventListener('change', () => { fsGo.disabled = !fsSelect.value; if (fsSelect.value !== '') { const i = parseInt(fsSelect.value, 10); show(i); flashPage(i); } });
-            fsGo.addEventListener('click', () => { if (fsSelect.value !== '') { const i = parseInt(fsSelect.value, 10); show(i); flashPage(i); } });
-            fsGo.disabled = !fsSelect.value;
-          })();
-        </script>
+      <!-- 标题区 -->
+      <div class="mt-seg-header">
+        <div class="mt-seg-title">Real Robot Gallery</div>
+        <p class="mt-seg-subtitle">
+          Real-world executions corresponding to the six RoboTwin tasks.
+        </p>
       </div>
+
+      <!-- 视频网格 -->
+      <div id="realRobotPager" class="video-pager" aria-label="Real Robot Experiments"></div>
+
+      <script>
+        (function () {
+          const pager = document.getElementById('realRobotPager');
+          if (!pager) return;
+
+          // 真机实验视频数据
+          const realVideos = [
+            {
+              title: "block handover",
+              src: "resources/success_demo/close_laptop.mp4"
+            },
+            {
+              title: "container place",
+              src: "resources/success_demo/handover_cucumber.mp4"
+            },
+            {
+              title: "dual bottles pick easy",
+              src: "resources/success_demo/pick_carrot.mp4"
+            },
+            {
+              title: "dual bottles pick hard",
+              src: "resources/success_demo/pick_dual_carrot.mp4"
+            },
+            {
+              title: "empty cup place",
+              src: "resources/success_demo/pick_flowers.mp4"
+            },
+            {
+              title: "pick apple messy",
+              src: "resources/success_demo/push_triangle.mp4"
+            }
+          ];
+
+          // 创建网格容器
+          const grid = document.createElement('div');
+          grid.className = 'rvp-grid';
+
+          // 生成每个视频项
+          realVideos.forEach(video => {
+            const item = document.createElement('div');
+            item.className = 'rvp-item';
+            item.innerHTML = `
+              <div class="rvp-video">
+                <span class="rvp-badge">Real robot</span>
+                <div class="rvp-play-icon"></div>
+                <video muted loop playsinline controls preload="metadata" src="${video.src}">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <div class="rvp-caption">${video.title}</div>
+            `;
+            grid.appendChild(item);
+          });
+
+          // 将网格添加到容器
+          pager.appendChild(grid);
+
+          // 为所有视频添加淡入效果
+          grid.querySelectorAll('video').forEach(video => {
+            const markReady = () => video.classList.add('is-ready');
+            if (video.readyState >= 2) {
+              markReady();
+            } else {
+              video.addEventListener('loadeddata', markReady, { once: true });
+            }
+          });
+        })();
+      </script>
     </div>
-  </section>
+  </div>
+</section>
+
 
   <!-- ================== Collecting Human and Robot Demonstrations ================== -->
   <section class="section mt-section" id="collection">
