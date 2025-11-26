@@ -381,7 +381,7 @@
 
         <!-- Zero-shot 搜索栏 -->
         <div class="mt-seg-title">RoboTwin Simulation</div>
-        <div id="resultVideoPager" class="video-pager" aria-label="仿真效果视频展示">
+        <div id="resultVideoPager" class="video-pager" aria-label="RoboTwin Simulation">
         </div>
 
         <script>
@@ -394,32 +394,32 @@
               {
                 title: "Block Handover",
                 src: "resources/robotwin_rollout/block_handover_D435/episode0/video.mp4",
-                description: "机器人手交接任务"
+                description: "Block Handover"
               },
               {
                 title: "Container Place",
                 src: "resources/robotwin_rollout/container_place_D435/episode0/video.mp4",
-                description: "容器放置任务"
+                description: "Container Place"
               },
               {
                 title: "Dual Bottles Pick (Easy)",
                 src: "resources/robotwin_rollout/dual_bottles_pick_easy_D435/episode0/video.mp4",
-                description: "双瓶抓取任务(简单)"
+                description: "Dual Bottles Pick (Easy)"
               },
               {
                 title: "Dual Bottles Pick (Hard)",
                 src: "resources/robotwin_rollout/dual_bottles_pick_hard_D435/episode0/video.mp4",
-                description: "双瓶抓取任务(困难)"
+                description: "Dual Bottles Pick (Hard)"
               },
               {
                 title: "Empty Cup Place",
                 src: "resources/robotwin_rollout/empty_cup_place_D435/episode0/video.mp4",
-                description: "空杯放置任务"
+                description: "Empty Cup Place"
               },
               {
                 title: "Pick Apple Messy",
                 src: "resources/robotwin_rollout/pick_apple_messy_D435/episode0/video.mp4",
-                description: "混乱环境苹果抓取"
+                description: "Pick Apple Messy"
               }
             ];
 
@@ -433,7 +433,7 @@
               item.className = 'rvp-item';
               item.innerHTML = `
                 <div class="rvp-video">
-                  <span class="rvp-badge">仿真</span>
+                  <span class="rvp-badge">Robotwin</span>
                   <video autoplay muted loop playsinline controls preload="metadata" src="${video.src}">
                     Your browser does not support the video tag.
                   </video>
