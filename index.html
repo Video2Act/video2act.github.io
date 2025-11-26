@@ -285,26 +285,29 @@
   </header>
 
   <!-- ================== Project Video (YouTube) ================== -->
-  <section class="section mt-section section--after-cover" id="teaser">
-    <div class="container">
-      <h2 class="title is-2 mt-title">Project Video</h2>
-      <div class="mt-card w-70">
-        <div class="mt-video-wrap">
-          <iframe
-            data-yt
-            title="MotionTrans — Project Video"
-            loading="lazy"
-            src="./resources/video2act_demo.mp4"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen>
-          </iframe>
-        </div>
-        <p style="text-align:center; margin-top:10px; font-weight:800; color:#111827;">
-          Teaser / Project video
-        </p>
+<section class="section mt-section section--after-cover" id="teaser">
+  <div class="container">
+    <h2 class="title is-2 mt-title">Project Video</h2>
+    <div class="mt-card w-70">
+      <div class="mt-video-wrap">
+        <video
+          class="mt-video"
+          controls
+          preload="metadata"
+          style="width:100%; border-radius:10px;"
+        >
+          <source src="./resources/video2act_demo.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
       </div>
+      <p style="text-align:center; margin-top:10px; font-weight:800; color:#111827;">
+        Teaser / Project video
+      </p>
     </div>
-  </section>
+  </div>
+</section>
+
+
 
   <!-- ================== Abstract ================== -->
   <section class="section mt-section" id="abstract">
@@ -341,8 +344,7 @@
           <img src="./resources/pipline.png" alt="MotionTrans pipeline from VR human data to deployable robot policies">
         </div>
         <p style="text-align:center; margin-top:10px; font-weight:800; color:#111827;">
-          From VR human demonstrations to deployable, zero/few-shot robot skills via a unified state–action space,
-          human→robot data transformation, and weighted multi-task co-training.
+          Video2Act employs an asynchronous dual-system framework consisting of a slow perceptual VDM (System 2) and a fast action head (System 1). System 2 extracts refined spatial and motion representations from two image inputs: high-resolution images for spatial filtering via Sobel operators and long-horizon sequences for motion extraction via FFT. These low-frequency spatio-motional features serve as conditioning inputs to System 1, which simultaneously receives high-frequency image tokens. Through cross-attention conditioning, these asynchronously updated signals are effectively fused, enabling robust and real-time action generation.
         </p>
       </div>
     </div>
