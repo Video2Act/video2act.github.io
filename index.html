@@ -353,9 +353,9 @@
   <!-- ================== Zero-shot ================== -->
   <section class="section mt-section" id="zero-shot">
     <div class="container">
-      <h2 class="title is-2 mt-title">MotionTrans Zero-Shot Inference Results on Real Robot</h2>
+      <h2 class="title is-2 mt-title">仿真效果展示</h2>
       <p class="has-text-grey" style="text-align:center; margin-bottom:12px;">
-        (Left: Human Data · Middle: MotionTrans-DP · Right: MotionTrans-Pi0-VLA)
+        机器人在仿真环境中的操作演示
       </p>
 
       <div class="mt-card" id="zeroShotBlock">
@@ -364,58 +364,24 @@
           .mt-seg-title::before{ content:""; width:10px; height:10px; border-radius:50%; background: linear-gradient(90deg, #7c3aed, #06b6d4); box-shadow: 0 0 0 4px rgba(124,58,237,.12); }
 
           #resultVideoPager{ --gap: 24px; --badge-bg: rgba(0,0,0,.55); --badge-shadow: 0 2px 8px rgba(0,0,0,.25); }
-          #resultVideoPager .rvp-task{ text-align:center; margin:0 0 12px; font-weight:700; line-height:1.2; }
-          #resultVideoPager .rvp-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap); }
+          #resultVideoPager .rvp-grid{ display:grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: var(--gap); max-width: 1200px; margin: 0 auto; }
+          @media (max-width: 992px){ #resultVideoPager .rvp-grid{ grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); } }
+          @media (max-width: 576px){ #resultVideoPager .rvp-grid{ grid-template-columns: 1fr; grid-template-rows: repeat(6, 1fr); } }
           #resultVideoPager .rvp-item{ display:flex; flex-direction:column; }
           #resultVideoPager .rvp-video{ position:relative; width:100%; aspect-ratio:16/9; border-radius:10px; overflow:hidden; background:#000; }
           #resultVideoPager .rvp-video video{ width:100%; height:100%; object-fit:cover; display:block; }
           #resultVideoPager .rvp-badge{ position:absolute; top:10px; left:10px; padding:6px 10px; border-radius:999px; background: var(--badge-bg); color:#fff; font-size:12px; letter-spacing:.2px; box-shadow: var(--badge-shadow); user-select:none; }
-          #resultVideoPager .rvp-caption{ text-align:center; margin-top:6px; font-size:.95rem; color:#6b7280; }
-          #resultVideoPager .vp-controls{ margin: 6px 0 16px; }
+          #resultVideoPager .rvp-caption{ text-align:center; margin-top:6px; font-size:.95rem; color:#6b7280; font-weight: 600; }
 
           #zero-shot .fig-grid{ display:grid; grid-template-columns: 1fr; gap:24px; max-width:1100px; margin:0 auto; }
           #zero-shot figure{ margin:0; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 8px 28px rgba(0,0,0,.12); }
           #zero-shot img{ width:100%; height:auto; display:block; }
           #zero-shot figcaption{ padding:10px 14px; font-size:.95rem; color:#6b7280; text-align:center; background:#fafafa; }
-
-          /* —— Zero-shot 搜索栏 —— */
-          #zs-tools .ht-toolbar{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:center; margin:12px auto 18px; max-width:980px; }
-          #zs-tools .ht-select{ padding:10px 14px; border:1px solid #e5e7eb; border-radius:999px; background:#fff; font-size:14px; min-width:280px; outline:none; box-shadow:0 2px 8px rgba(0,0,0,.04); }
-          #zs-tools .ht-go{ padding:10px 16px; border:1px solid #e5e7eb; border-radius:999px; background:#111; color:#fff; font-size:14px; line-height:1; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.06); transition: transform .15s ease, opacity .15s ease; }
-          #zs-tools .ht-go:hover{ transform: translateY(-1px); }
-          #zs-tools .ht-go:disabled{ opacity:.5; cursor:not-allowed; }
-          #resultVideoPager .flash{ box-shadow: 0 0 0 3px #7c3aed inset, 0 10px 26px rgba(124,58,237,.25); transition: box-shadow .25s ease; }
         </style>
 
         <!-- Zero-shot 搜索栏 -->
-        <div id="zs-tools">
-          <div class="ht-toolbar">
-            <select id="zs-filter" class="ht-select" aria-label="Jump to a zero-shot task">
-              <option value="" selected disabled>— Jump to a task —</option>
-            </select>
-            <button type="button" id="zs-go" class="ht-go" disabled>Go</button>
-          </div>
-        </div>
-
-        <div class="mt-seg-title">Videos</div>
-        <div id="resultVideoPager" class="video-pager" aria-label="Zero-shot qualitative video pager">
-          <div class="vp-controls">
-            <button class="vp-btn vp-prev" aria-label="Previous task">‹</button>
-            <div class="vp-dots" role="tablist" aria-label="Task pages"></div>
-            <button class="vp-btn vp-next" aria-label="Next task">›</button>
-          </div>
-        </div>
-
-        <div class="mt-seg-title" style="margin-top:18px;">Quantitative Results</div>
-        <div class="fig-grid">
-          <figure>
-            <img src="./resources/experiment_results/zeroshot_sr.png" alt="Zero-shot success rate across tasks" loading="lazy">
-            <figcaption>Zero-shot <b>Success Rate</b> (SR, %) across tasks. Comparison between MotionTrans-DP (blue) and MotionTrans-π0-VLA (pink).</figcaption>
-          </figure>
-          <figure>
-            <img src="./resources/experiment_results/zeroshot_score.png" alt="Zero-shot motion progress score across tasks" loading="lazy">
-            <figcaption>Zero-shot Motion Progress <b>Score</b> across tasks. Comparison between MotionTrans-DP (red) and MotionTrans-π0-VLA (yellow).</figcaption>
-          </figure>
+        <div class="mt-seg-title">RoboTwin Simulation</div>
+        <div id="resultVideoPager" class="video-pager" aria-label="仿真效果视频展示">
         </div>
 
         <script>
@@ -423,97 +389,72 @@
             const pager = document.getElementById('resultVideoPager');
             if (!pager) return;
 
-            const tasks = [
-              { title: "Orange → Green Bucket", human: "resources/human_data/put_orange_to_the_green_bucket_0.mp4", dp0: "resources/infer_video_960x540/orange_bucket_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/orange_bucket_pi0_960x540.mp4" },
-              { title: "Unplug Charger", human: "resources/human_data/unplug_the_white_charger_0.mp4", dp0: "resources/infer_video_960x540/unplug_charger_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/unplug_charger_pi0_960x540.mp4" },
-              { title: "Close Laptop", human: "resources/human_data/close_silver_laptop_0.mp4", dp0: "resources/infer_video_960x540/close_laptop_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/close_laptop_pi0_960x540.mp4" },
-              { title: "Banana → White Plate", human: "resources/human_data/put_banana_to_the_white_plate_0.mp4", dp0: "resources/infer_video_960x540/banana_plate_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/banana_plate_pi0_960x540.mp4" },
-              { title: "Open Box → Put Toy Panda", human: "resources/human_data/first_open_the_white_cap_style_box_then_put_toy_panda_to_the_box_0.mp4", dp0: "resources/infer_video_960x540/box_panda_box_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/box_panda_box_pi0_960x540.mp4" },
-              { title: "Press Dice", human: "resources/human_data/press_red_dice_to_make_it_rotation_0.mp4", dp0: "resources/infer_video_960x540/press_dice_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/press_dice_pi0_960x540.mp4" },
-              { title: "Pour Bottle to Bowl", human: "resources/human_data/pour_bottle_to_the_pink_bowl.mp4", dp0: "resources/infer_video_960x540/pour_bottle_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/pour_bottle_pi0_960x540.mp4" },
-              { title: "Bread-Bucket", human: "resources/human_data/drop_bread_to_the_green_bucket_0.mp4", dp0: "resources/infer_video_960x540/bread_bucket_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/bread_bucket_pi0_960x540.mp4" },
-              { title: "Press Stapler", human: "resources/human_data/press_the_stapler_0.mp4", dp0: "resources/infer_video_960x540/press_stapler_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/press_stapler_pi0_960x540.mp4" },
-              { title: "Mango → Pink Bowl (Bypass)", human: "resources/human_data/put_mango_to_pink_bowl_while_avoiding_obstacle_by_bypassing_0.mp4", dp0: "resources/infer_video_960x540/mango_bypass_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/mango_bypass_pi0_960x540.mp4" },
-              { title: "Mango → Pink Bowl (Lift)", human: "resources/human_data/put_mango_to_the_pink_bowl_while_avoiding_obstacle_by_lifting.mp4", dp0: "resources/infer_video_960x540/mango_bypass_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/mango_bypass_pi0_960x540.mp4" },
-              { title: "Toy Bear → Black Box", human: "resources/human_data/put_toy_bear_to_the_black_box_0.mp4", dp0: "resources/infer_video_960x540/mango_lift_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/mango_lift_pi0_960x540.mp4" },
-              { title: "Wipe Towel", human: "resources/human_data/wipe_blue_towel_on_the_table_and_push_it_to_the_bulky_bottle_0.mp4", dp0: "resources/infer_video_960x540/wipe_towel_dp0_960x540.mp4", pi0: "resources/infer_video_960x540/wipe_towel_pi0_960x540.mp4" },
+            // 仿真视频数据
+            const simVideos = [
+              {
+                title: "Block Handover",
+                src: "resources/robotwin_rollout/block_handover_D435/episode0/video.mp4",
+                description: "机器人手交接任务"
+              },
+              {
+                title: "Container Place",
+                src: "resources/robotwin_rollout/container_place_D435/episode0/video.mp4",
+                description: "容器放置任务"
+              },
+              {
+                title: "Dual Bottles Pick (Easy)",
+                src: "resources/robotwin_rollout/dual_bottles_pick_easy_D435/episode0/video.mp4",
+                description: "双瓶抓取任务(简单)"
+              },
+              {
+                title: "Dual Bottles Pick (Hard)",
+                src: "resources/robotwin_rollout/dual_bottles_pick_hard_D435/episode0/video.mp4",
+                description: "双瓶抓取任务(困难)"
+              },
+              {
+                title: "Empty Cup Place",
+                src: "resources/robotwin_rollout/empty_cup_place_D435/episode0/video.mp4",
+                description: "空杯放置任务"
+              },
+              {
+                title: "Pick Apple Messy",
+                src: "resources/robotwin_rollout/pick_apple_messy_D435/episode0/video.mp4",
+                description: "混乱环境苹果抓取"
+              }
             ];
 
-            const prev = pager.querySelector('.vp-prev');
-            const next = pager.querySelector('.vp-next');
-            const dotsWrap = pager.querySelector('.vp-dots');
+            // 创建网格容器
+            const grid = document.createElement('div');
+            grid.className = 'rvp-grid';
 
-            const zsSelect = document.getElementById('zs-filter');
-            const zsGo = document.getElementById('zs-go');
-            tasks.forEach((t, i) => {
-              const opt = document.createElement('option'); opt.value = String(i); opt.textContent = t.title; zsSelect.appendChild(opt);
-            });
-
-            const frag = document.createDocumentFragment();
-            tasks.forEach((t, i) => {
-              const page = document.createElement('div');
-              page.className = 'vp-page' + (i === 0 ? ' active' : '');
-              page.id = 'rvp-page-' + (i + 1);
-              page.innerHTML = `
-                <h3 class="rvp-task">${t.title}</h3>
-                <div class="rvp-grid">
-                  <div class="rvp-item">
-                    <div class="rvp-video">
-                      <span class="rvp-badge">Human Data</span>
-                      <video autoplay muted loop playsinline controls preload="metadata" src="${t.human}"></video>
-                    </div>
-                  </div>
-                  <div class="rvp-item">
-                    <div class="rvp-video">
-                      <span class="rvp-badge">MotionTrans-DP</span>
-                      <video autoplay muted loop playsinline controls preload="metadata" src="${t.dp0}"></video>
-                    </div>
-                    <div class="rvp-caption">MotionTrans-DP · Zero Shot</div>
-                  </div>
-                  <div class="rvp-item">
-                    <div class="rvp-video">
-                      <span class="rvp-badge">MotionTrans-Pi0-VLA</span>
-                      <video autoplay muted loop playsinline controls preload="metadata" src="${t.pi0}"></video>
-                    </div>
-                    <div class="rvp-caption">MotionTrans-Pi0-VLA · Zero Shot</div>
-                  </div>
+            // 生成每个视频项
+            simVideos.forEach(video => {
+              const item = document.createElement('div');
+              item.className = 'rvp-item';
+              item.innerHTML = `
+                <div class="rvp-video">
+                  <span class="rvp-badge">仿真</span>
+                  <video autoplay muted loop playsinline controls preload="metadata" src="${video.src}">
+                    Your browser does not support the video tag.
+                  </video>
                 </div>
+                <div class="rvp-caption">${video.title}</div>
               `;
-              frag.appendChild(page);
+              grid.appendChild(item);
             });
-            pager.appendChild(frag);
 
-            dotsWrap.innerHTML = '';
-            const pages = Array.from(pager.querySelectorAll('.vp-page'));
-            pages.forEach((p, k) => {
-              const dot = document.createElement('span');
-              dot.className = 'vp-dot' + (k === 0 ? ' active' : '');
-              dot.setAttribute('role', 'tab');
-              dot.setAttribute('aria-selected', k === 0 ? 'true' : 'false');
-              dot.setAttribute('aria-controls', p.id);
-              dot.addEventListener('click', () => show(k));
-              dotsWrap.appendChild(dot);
+            // 将网格添加到容器
+            pager.appendChild(grid);
+
+            // 为所有视频添加淡入效果
+            grid.querySelectorAll('video').forEach(video => {
+              const markReady = () => video.classList.add('is-ready');
+              if (video.readyState >= 2) {
+                markReady();
+              } else {
+                video.addEventListener('loadeddata', markReady, { once: true });
+              }
             });
-            const dots = Array.from(dotsWrap.querySelectorAll('.vp-dot'));
-
-            let idx = 0;
-            function pauseHiddenPages(except) { pages.forEach((pg, k) => { if (k !== except) { pg.querySelectorAll('video').forEach(v => { try{ v.pause(); v.currentTime = 0; } catch(e){} }); } }); }
-            function playVisiblePage(i) { pages[i].querySelectorAll('video').forEach(v => { try{ v.currentTime = 0; v.play(); } catch(e){} }); }
-            function show(i) {
-              pages[idx].classList.remove('active'); dots[idx].classList.remove('active'); dots[idx].setAttribute('aria-selected', 'false');
-              idx = (i + pages.length) % pages.length;
-              pages[idx].classList.add('active'); dots[idx].classList.add('active'); dots[idx].setAttribute('aria-selected', 'true');
-              pauseHiddenPages(idx); playVisiblePage(idx);
-            }
-            prev.addEventListener('click', () => show(idx - 1));
-            next.addEventListener('click', () => show(idx + 1));
-            pager.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') show(idx - 1); if (e.key === 'ArrowRight') show(idx + 1); });
-            pauseHiddenPages(0); playVisiblePage(0);
-
-            function flashPage(i){ const vids = pages[i].querySelectorAll('.rvp-video'); vids.forEach(v => v.classList.add('flash')); setTimeout(() => vids.forEach(v => v.classList.remove('flash')), 1200); pages[i].scrollIntoView({behavior:'smooth', block:'nearest'}); }
-            zsSelect.addEventListener('change', () => { zsGo.disabled = !zsSelect.value; if (zsSelect.value !== '') { const i = parseInt(zsSelect.value, 10); show(i); flashPage(i); } });
-            zsGo.addEventListener('click', () => { if (zsSelect.value !== '') { const i = parseInt(zsSelect.value, 10); show(i); flashPage(i); } });
-            zsGo.disabled = !zsSelect.value;
           })();
         </script>
       </div>
