@@ -870,7 +870,7 @@
 <section class="section mt-section" id="generalization">
   <div class="container">
     <h2 class="title is-2 mt-title">Generalization Experiments</h2>
-  <p class="has-text-grey" style="text-align:center; margin-bottom:12px;">
+    <p class="has-text-grey" style="text-align:center; margin-bottom:12px;">
       Visual and quantitative results of our generalization experiments.
     </p>
 
@@ -918,33 +918,19 @@
         /* 每一行（carrot / cucumber） */
         .gen-row{
           display:flex;
-          flex-direction:row;
-          gap:16px;
-          align-items:flex-start;
+          flex-direction:column;
+          gap:12px;
           padding:14px 16px;
           border-radius:16px;
           background:#ffffff;
           box-shadow:0 10px 26px rgba(15,23,42,.10);
         }
-        @media (max-width: 768px){
-          .gen-row{
-            flex-direction:column;
-          }
-        }
 
-        .gen-row-label{
-          min-width:140px;
+        /* 行标题：放在视频上方 */
+        .gen-row-header{
           font-weight:700;
           font-size:1rem;
           color:#111827;
-          display:flex;
-          flex-direction:column;
-          gap:4px;
-        }
-        .gen-row-label span{
-          font-size:.85rem;
-          color:#6b7280;
-          font-weight:500;
         }
 
         .gen-row-videos{
@@ -1044,10 +1030,7 @@
 
         <!-- Carrot row -->
         <div class="gen-row">
-          <div class="gen-row-label">
-            Carrot Generalization
-            <span>Background / Lighting / Object shift</span>
-          </div>
+          <div class="gen-row-header">Carrot Generalization</div>
           <div class="gen-row-videos">
             <div class="gen-item">
               <div class="gen-video-wrap">
@@ -1086,10 +1069,7 @@
 
         <!-- Cucumber row -->
         <div class="gen-row">
-          <div class="gen-row-label">
-            Cucumber Generalization
-            <span>Background / Lighting / Object shift</span>
-          </div>
+          <div class="gen-row-header">Cucumber Generalization</div>
           <div class="gen-row-videos">
             <div class="gen-item">
               <div class="gen-video-wrap">
