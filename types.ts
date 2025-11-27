@@ -17,3 +17,12 @@ export interface LinkButton {
   url: string;
   isImage?: boolean;
 }
+
+export interface CarouselItem {
+  id: string | number;
+  title?: string;
+  videoUrl?: string; // URL for mp4
+  posterUrl?: string;
+  youtubeId?: string; // Or YouTube ID
+  description?: string;
+}
