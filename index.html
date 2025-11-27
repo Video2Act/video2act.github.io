@@ -1,201 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-55NDKMPMDH"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-55NDKMPMDH');
-  </script>
-
-  <meta charset="utf-8">
-  <meta name="description" content="Video2Act: A Dual-System Video Diffusion Policy with Robotic Spatio-Motional Modeling">
-  <meta name="keywords" content="VLA, Video Diffusion, Policy learning">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#000000">
-  <title>Video2Act</title>
-
-  <!-- Performance: preconnect fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <!-- 首屏更快：预加载海报图 -->
-  <link rel="preload" as="image" href="resources/cover_poster.jpg">
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-
-  <!-- CSS libs -->
-  <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-  <!-- Icons -->
-  <link rel="icon" href="./resources/Tsinghua_University-Logo_256x256.ico">
-  <script src="https://kit.fontawesome.com/006a5775d5.js" crossorigin="anonymous"></script>
-
-  <!-- JS libs -->
-  <script src="https://www.youtube.com/iframe_api"></script>
-  <script src="./static/js/ajax.googleapis.com_ajax_libs_jquery_3.5.1_jquery.min.js"></script>
-  <script src="./static/js/isInViewport.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
-
-  <!-- ================== Styles ================== -->
-  <style>
-    :root{
-      --brand-size: clamp(64px, 10vw, 160px);
-      --title-rest-size: clamp(48px, 2.2vw, 36px);
-      --cover-subtitle-size: clamp(16px, 1.8vw, 28px);
-      --cover-side-gutter: 7vw;
-      --cover-max-width: 1400px;
-      --cover-title-weight: 800;
-      --title-gap: .35em;
-      --cover-top-offset: 0vh;
-      --cover-overlay-bg: rgba(0,0,0,0.0);
-      --cover-cta-gap: 10px;
-      --cover-shadow: 0 6px 28px rgba(0,0,0,.55);
-      --cover-text-shadow: 2px 2px 12px rgba(0,0,0,.65);
-    }
-
-    html, body { height: 100%; margin: 0; font-family: "Google Sans","Noto Sans",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
-    * { box-sizing: border-box; }
-
-    /* 平滑滚动与锚点偏移 */
-    html{ scroll-behavior: smooth; }
-    section[id], header#top{ scroll-margin-top: 80px; }
-
-    /* ========= 导航栏整条透明（含下拉） ========= */
-    .navbar { position: fixed; top:0; left:0; right:0; z-index: 30; background: transparent !important; box-shadow: none; }
-    .navbar.is-transparent { background: transparent !important; }
-    .navbar-menu { background: transparent !important; }
-    .navbar-item, .navbar-link { color:#fff !important; }
-    .navbar-item:hover, .navbar-link:hover { background: transparent !important; text-decoration: underline; }
-    .navbar-dropdown{
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      backdrop-filter: none !important;
-      padding-top: .25rem; padding-bottom: .25rem;
-    }
-    .navbar-dropdown .navbar-item{ color:#fff !important; }
-    .navbar-dropdown .navbar-item:hover{ background: transparent !important; text-decoration: underline; }
-    .navbar-menu.is-active{ background: transparent !important; }
-
-    /* 可访问性：跳到内容 */
-    .skip-link{ position:absolute; left:-9999px; top:0; background:#000; color:#fff; padding:8px 12px; border-radius:8px; }
-    .skip-link:focus{ left:12px; z-index:9999; }
-
-    /* ===== 封面 ===== */
-    .cover { position: relative; width: 100%; height: 100svh; min-height: 580px; overflow: hidden; background: #000; }
-    .cover video, .cover img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(1.05) contrast(1.02) brightness(.92); }
-    .cover__overlay {
-      position: absolute; inset: 0; display: grid; place-items: center;
-      padding-left: var(--cover-side-gutter); padding-right: var(--cover-side-gutter);
-      background: linear-gradient(to bottom, rgba(0,0,0,.15) 0%, rgba(0,0,0,.35) 60%, rgba(0,0,0,.5) 100%);
-    }
-    .cover__content {
-      width: min(var(--cover-max-width), calc(100% - 2*var(--cover-side-gutter)));
-      margin-top: var(--cover-top-offset);
-      text-align: center; color: #fff; text-shadow: var(--cover-text-shadow);
-      padding: 18px 0; background: var(--cover-overlay-bg); border-radius: 12px;
-    }
-    .cover__title { display: flex; flex-direction: column; align-items: center; margin: 0 0 12px 0; }
-
-    /* ===== 纯紫色外描边：双层文本法（无内描边、清晰抗锯齿） ===== */
-    :root{
-      --brand-stroke: 12px;
-      --brand-stroke-color: #7c3aed;
-    }
-    .cover__title .brand{
-      position: relative;
-      display: inline-block;
-      font-size: var(--brand-size);
-      font-weight: var(--cover-title-weight);
-      line-height: 1.03;
-      letter-spacing: -0.02em;
-    }
-    .cover__title .brand__fill{
-      position: relative; z-index: 2;
-      color: #fff; -webkit-text-fill-color:#fff;
-      text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
-    }
-    .cover__title .brand__stroke{
-      position: absolute; inset: 0; z-index: 1;
-      color: transparent; -webkit-text-fill-color: transparent;
-      -webkit-text-stroke: var(--brand-stroke) var(--brand-stroke-color);
-      pointer-events: none;
-    }
-    @media (max-width: 768px){ :root{ --brand-stroke: 2px; } }
-
-    .cover__title .rest { margin-top: var(--title-gap); font-size: var(--title-rest-size); line-height: 1.2; font-weight: 500; opacity: .98; }
-    .cover__title .rest .line { display: block; }
-
-    .cover__subtitle { font-size: var(--cover-subtitle-size); font-weight: 500; opacity: .96; margin-top: 14px; }
-    /* 只改作者名字链接为紫色并加粗 */
-    .cover__subtitle a{ color:#4B70F5 !important; text-decoration:none; font-weight:700; }
-    .cover__subtitle a:hover{ text-decoration:underline; opacity:.9; }
-
-    .cover__meta { font-size: clamp(18px, 1.1vw, 24px); opacity: .9; margin-top: 10px; margin-bottom: 20px; }
-    .cover__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--cover-cta-gap); margin-top: 6px; }
-    .cover__btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.6); color: #fff; text-decoration: none; backdrop-filter: blur(4px); background: rgba(0,0,0,.25); transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease; box-shadow: var(--cover-shadow); font-size: 14px; line-height: 1; }
-    .cover__btn:hover { transform: translateY(-2px); background: rgba(255,255,255,.08); border-color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
-    .section--after-cover { padding-block: 48px; }
-
-    /* ===== 封面媒体层：先显示 poster，视频 ready 后渐显 ===== */
-    .cover__media{ position:absolute; inset:0; }
-    .cover__poster,
-    .cover__media video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
-    .cover__media video{ opacity:0; transition:opacity .35s ease; }
-    .cover__media video.is-ready{ opacity:1; }
-
-    /* Video pager base */
-    .video-pager .vp-page { display: none; }
-    .video-pager .vp-page.active { display: block; }
-    .vp-controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 8px 0 16px; }
-    .vp-btn { border: none; width: 40px; height: 40px; border-radius: 999px; background: #222; color: #fff; line-height: 40px; text-align: center; font-size: 20px; cursor: pointer; }
-    .vp-btn:focus { outline: 2px solid #888; }
-    .vp-dots { display: flex; gap: 10px; align-items: center; }
-    .vp-dot { width: 10px; height: 10px; border-radius: 50%; background: #cfcfcf; cursor: pointer; }
-    .vp-dot.active { background: #333; }
-
-    /* 图片/视频淡入（+iframe） */
-    .mt-img-wrap img, .rvp-video video, .media-fixed, .mt-fig img, .ht-card video, .mt-video-wrap iframe { opacity:0; transition: opacity .25s ease; }
-    .is-ready { opacity:1 !important; }
-
-    /* ===== 全局主题卡片/标题 ===== */
-    .mt-section { position: relative; }
-    .mt-card{ background: linear-gradient(180deg, #ffffff, #fafafa); border: 1px solid #e5e7eb; border-radius: 16px; box-shadow: 0 10px 32px rgba(0,0,0,.08); padding: 18px; transition: transform .18s ease, box-shadow .18s ease; }
-    .mt-card.compact{ padding:14px; }
-    .mt-card:hover{ transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,.12); }
-
-    .mt-title{ display: table; margin: 0 auto 14px auto; padding-bottom: 6px; position: relative; text-align: center !important; }
-    .mt-title::after{ content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:-4px; width: 120px; height: 3px; border-radius: 999px; background: linear-gradient(90deg, #7c3aed, #06b6d4); }
-
-    .mt-video-wrap, .mt-img-wrap{ position: relative; width: 100%; border-radius: 12px; overflow: hidden; }
-    .mt-video-wrap{ aspect-ratio: 16 / 9; }
-    .mt-video-wrap video, .mt-img-wrap img{ width: 100%; height: 100%; object-fit: cover; display: block; }
-    .mt-video-wrap iframe{ width:100%; height:100%; border:0; display:block; } /* NEW: 让 iframe 适配容器 */
-
-    .mt-badge{ position: absolute; top: 10px; left: 10px; padding: 6px 10px; border-radius: 999px; background: rgba(0,0,0,.55); color:#fff; font-size:12px; letter-spacing:.2px; box-shadow: 0 2px 8px rgba(0,0,0,.25); user-select: none; }
-
-    .mt-fig-grid{ display:grid; grid-template-columns: 1fr; gap:24px; max-width:1100px; margin:0 auto; }
-    .mt-fig{ margin:0; background:#fff; border-radius:12px; overflow:hidden; box-shadow: 0 8px 28px rgba(0,0,0,.12); }
-    .mt-fig img{ width:100%; height:auto; display:block; }
-    .mt-fig figcaption{ padding:10px 14px; font-size:.95rem; color:#6b7280; text-align:center; background:#fafafa; }
-
-    @media (min-width: 1024px){ .w-70 { width: 70%; margin-left:auto; margin-right:auto; } }
-
-    /* ===== Human / Robot Tasks（卡片网格基样式在各自作用域内再细化） ===== */
-  </style>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#020617" />
+    <meta
+      name="description"
+      content="Video2Act: A Dual-System Video Diffusion Policy with Robotic Spatio-Motional Modeling"
+    />
+    <title>Video2Act</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                dark: '#020617',
+                purple: '#7c3aed',
+                cyan: '#06b6d4',
+              }
+            },
+            fontFamily: {
+              sans: ['"Google Sans"', '"Noto Sans"', 'system-ui', 'sans-serif'],
+            },
+            animation: {
+              'blob': 'blob 7s infinite',
+            },
+            keyframes: {
+              blob: {
+                '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                '100%': { transform: 'translate(0px, 0px) scale(1)' },
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+  }
+}
+</script>
 </head>
-
 <body>
 
   <!-- Skip to content -->
